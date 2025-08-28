@@ -1,0 +1,608 @@
+
+
+<?php $__env->startSection('others_css'); ?>
+<style>
+    /* Prevent window scrolling */
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    /* Main container using Bootstrap grid */
+    .container-fluid {
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .row {
+        height: 100%;
+        margin: 0;
+    }
+    
+    /* Image column - fixed position */
+    .col-image {
+        padding: 0;
+        height: 100vh;
+        position: relative;
+    }
+    
+    .fixed-image {
+        width: 100%;
+        height: 100vh;
+        object-fit: cover;
+        position: sticky;
+        top: 0;
+    }
+    
+    /* Form column - scrollable */
+    .col-form {
+        padding: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .login-card {
+        padding: 2rem;
+    }
+    
+    /* Form styling */
+    .theme-form {
+        max-width: 100%;
+    }
+    
+    /* Error messages */
+    .text-danger {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+    }
+    
+    /* OTP input styling */
+    .otp-inputs {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 20px 0;
+    }
+    
+    .otp-input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
+    
+    .otp-input:focus {
+        border-color: #007bff;
+        outline: none;
+        background: #fff;
+    }
+    
+    /* Hidden form steps */
+    .form-step {
+        display: none;
+    }
+    
+    .form-step.active {
+        display: block;
+    }
+    
+    /* Loading spinner */
+    .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 767.98px) {
+        .col-image {
+            display: none;
+        }
+        .col-form {
+            width: 100%;
+        }
+        
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+    }
+</style>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('others_content'); ?>
+<head>
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
+</head>
+<div class="container-fluid p-0">
+    <div class="row m-0">
+        <!-- Left Column - Fixed Image -->
+        <div class="col-md-6 p-0 col-image">  
+            <img src="<?php echo e(asset('/assets/images/left.png')); ?>" class="fixed-image">
+        </div>
+        
+        <!-- Right Column - Scrollable Form -->
+        <div class="col-md-6 p-0 col-form">    
+            <div class="login-card">
+                <div>
+                    <div><a class="logo" href=""><img class="for-light" src="<?php echo e(asset('assets/images/listrlogo.png')); ?>" alt="loginpage" style="width:90px;"></a></div>
+                    <div class="login-main"> 
+                        <!-- Success/Error Messages -->
+                        <div id="messageContainer"></div>
+
+                        <!-- Step 1: Registration Form -->
+                        <div id="step1" class="form-step active">
+                            <form class="theme-form" id="registrationForm">
+                                <?php echo csrf_field(); ?>
+                                <h4 class="text-center">Create agent account</h4>
+                                <p class="text-center">Fill the agent details below to register</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Full Name</label>
+                                            <input class="form-control" type="text" name="name" required placeholder="Enter your full name" value="<?php echo e(old('name')); ?>">
+                                            <?php $__errorArgs = ['name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <small class="text-danger"><?php echo e($message); ?></small>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Email Address</label>
+                                            <input class="form-control" type="email" name="email" required placeholder="agent@example.com" value="<?php echo e(old('email')); ?>">
+                                            <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <small class="text-danger"><?php echo e($message); ?></small>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Address Line 1</label>
+                                    <input class="form-control" type="text" name="address_line1" required placeholder="Enter your primary address" value="<?php echo e(old('address_line1')); ?>">
+                                    <?php $__errorArgs = ['address_line1'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <small class="text-danger"><?php echo e($message); ?></small>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-form-label">Address Line 2 (Optional)</label>
+                                    <input class="form-control" type="text" name="address_line2" placeholder="Apartment, suite, etc." value="<?php echo e(old('address_line2')); ?>">
+                                    <?php $__errorArgs = ['address_line2'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <small class="text-danger"><?php echo e($message); ?></small>
+                                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">State</label>
+                                            <input class="form-control" type="text" name="state" required placeholder="Enter state" value="<?php echo e(old('state')); ?>">
+                                            <?php $__errorArgs = ['state'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <small class="text-danger"><?php echo e($message); ?></small>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">City</label>
+                                            <input class="form-control" type="text" name="city" required placeholder="Enter city" value="<?php echo e(old('city')); ?>">
+                                            <?php $__errorArgs = ['city'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <small class="text-danger"><?php echo e($message); ?></small>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Zipcode</label>
+                                            <input class="form-control" type="text" name="zipcode" required placeholder="Enter zipcode" value="<?php echo e(old('zipcode')); ?>">
+                                            <?php $__errorArgs = ['zipcode'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <small class="text-danger"><?php echo e($message); ?></small>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-form-label">Phone</label>
+                                            <input class="form-control" type="tel" name="phone" required placeholder="Enter phone number" value="<?php echo e(old('phone')); ?>">
+                                            <?php $__errorArgs = ['phone'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                                <small class="text-danger"><?php echo e($message); ?></small>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-0">
+                                    <div class="checkbox p-0">
+                                        <input id="checkbox1" type="checkbox" required>
+                                        <label class="text-muted" for="checkbox1">I agree to the terms and conditions</label>
+                                    </div>
+                                    <div class="text-end mt-3">
+                                        <button class="btn btn-dark btn-block w-100" type="button" onclick="sendOTP()" id="sendOtpBtn">
+                                            <span class="spinner-border spinner-border-sm d-none" id="otpSpinner"></span>
+                                            <span id="otpBtnText">Send OTP & Register</span>
+                                        </button>
+                                    </div>
+                                </div>
+                               
+                                <p class="mt-4 mb-0 text-center">Already have account?<a class="ms-2" href="<?php echo e(route('agent.login.page')); ?>">Sign In</a></p>
+                            </form>
+                        </div>
+
+                        <!-- Step 2: OTP Verification -->
+                        <div id="step2" class="form-step">
+                            <form class="theme-form" id="otpForm">
+                                <?php echo csrf_field(); ?>
+                                <input type="hidden" name="temp_data" id="tempData">
+                                <h4 class="text-center">Verify OTP</h4>
+                                <p class="text-center">Enter the 4-digit code sent to your phone</p>
+                                
+                                <div class="otp-inputs">
+                                    <input type="text" class="otp-input" maxlength="1" name="otp1" required>
+                                    <input type="text" class="otp-input" maxlength="1" name="otp2" required>
+                                    <input type="text" class="otp-input" maxlength="1" name="otp3" required>
+                                    <input type="text" class="otp-input" maxlength="1" name="otp4" required>
+                                </div>
+                                
+                                <div class="text-center mb-3">
+                                    <small class="text-muted">Didn't receive the code? <a href="#" onclick="resendOTP()" id="resendOtpLink">Resend OTP</a></small>
+                                </div>
+                                
+                                <div class="text-end">
+                                    <button class="btn btn-secondary me-2" type="button" onclick="goBackToStep1()">Back</button>
+                                    <button class="btn btn-dark" type="button" onclick="verifyOTP()" id="verifyOtpBtn">
+                                        <span class="spinner-border spinner-border-sm d-none" id="verifySpinner"></span>
+                                        <span id="verifyBtnText">Verify & Complete Registration</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php $__env->stopSection(); ?>
+
+<?php $__env->startSection('others_script'); ?>
+<script>
+// Timer variables
+let resendTimer;
+let timeLeft = 30;
+
+function showMessage(type, message) {
+    const messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+
+function setButtonLoading(buttonId, spinnerId, btnTextId, isLoading) {
+    const spinner = document.getElementById(spinnerId);
+    const btnText = document.getElementById(btnTextId);
+    const button = document.getElementById(buttonId);
+    
+    if (isLoading) {
+        spinner.classList.remove('d-none');
+        btnText.textContent = 'Processing...';
+        button.disabled = true;
+    } else {
+        spinner.classList.add('d-none');
+        if (buttonId === 'sendOtpBtn') {
+            btnText.textContent = 'Send OTP & Register';
+        } else {
+            btnText.textContent = 'Verify & Complete Registration';
+        }
+        button.disabled = false;
+    }
+}
+
+// Function to start the resend timer
+function startResendTimer() {
+    const resendLink = document.getElementById('resendOtpLink');
+    
+    // Clear any existing timer
+    clearInterval(resendTimer);
+    
+    // Disable the resend link
+    resendLink.onclick = null;
+    resendLink.style.pointerEvents = 'none';
+    resendLink.style.color = '#6c757d';
+    resendLink.style.cursor = 'not-allowed';
+    
+    // Set initial time
+    timeLeft = 30;
+    resendLink.innerHTML = `Resend OTP (${timeLeft}s)`;
+    
+    // Start the countdown
+    resendTimer = setInterval(() => {
+        timeLeft--;
+        
+        if (timeLeft <= 0) {
+            // Enable the resend link
+            clearInterval(resendTimer);
+            resendLink.innerHTML = 'Resend OTP';
+            resendLink.onclick = function() { resendOTP(); };
+            resendLink.style.pointerEvents = 'auto';
+            resendLink.style.color = '';
+            resendLink.style.cursor = 'pointer';
+        } else {
+            // Update the timer text
+            resendLink.innerHTML = `Resend OTP (${timeLeft}s)`;
+        }
+    }, 1000);
+}
+
+function sendOTP() {
+    const form = document.getElementById('registrationForm');
+    const formData = new FormData(form);
+    
+    // Validate form first
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Show loading state
+    setButtonLoading('sendOtpBtn', 'otpSpinner', 'otpBtnText', true);
+    
+    // Send AJAX request to generate OTP
+    fetch('<?php echo e(route("agent.send.otp")); ?>', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        setButtonLoading('sendOtpBtn', 'otpSpinner', 'otpBtnText', false);
+        
+        if (data.success) {
+            document.getElementById('tempData').value = data.temp_data;
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            showMessage('success', data.message);
+            
+            // Start the resend timer
+            startResendTimer();
+        } else {
+            showMessage('danger', data.message);
+        }
+    })
+    .catch(error => {
+        setButtonLoading('sendOtpBtn', 'otpSpinner', 'otpBtnText', false);
+        console.error('Error:', error);
+        showMessage('danger', 'An error occurred. Please try again.');
+    });
+}
+
+function resendOTP() {
+    const tempData = document.getElementById('tempData').value;
+    const resendLink = document.getElementById('resendOtpLink');
+    
+    if (!tempData) {
+        showMessage('danger', 'Temporary data not found. Please go back and fill the form again.');
+        return;
+    }
+    
+    resendLink.textContent = 'Sending...';
+    resendLink.onclick = null;
+    resendLink.style.pointerEvents = 'none';
+    
+    fetch('<?php echo e(route("agent.resend.otp")); ?>', {
+        method: 'POST',
+        body: JSON.stringify({ temp_data: tempData }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('success', data.message);
+            
+            // Restart the timer after successful resend
+            startResendTimer();
+        } else {
+            showMessage('danger', data.message);
+            resendLink.textContent = 'Resend OTP';
+            resendLink.onclick = function() { resendOTP(); };
+            resendLink.style.pointerEvents = 'auto';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('danger', 'Failed to resend OTP.');
+        resendLink.textContent = 'Resend OTP';
+        resendLink.onclick = function() { resendOTP(); };
+        resendLink.style.pointerEvents = 'auto';
+    });
+}
+
+function verifyOTP() {
+    const form = document.getElementById('otpForm');
+    const formData = new FormData(form);
+    
+    // Validate OTP inputs
+    const otpInputs = document.querySelectorAll('.otp-input');
+    let otpComplete = true;
+    
+    for (let i = 0; i < otpInputs.length; i++) {
+        if (!otpInputs[i].value) {
+            otpComplete = false;
+            break;
+        }
+    }
+    
+    if (!otpComplete) {
+        showMessage('danger', 'Please enter the complete 4-digit OTP code.');
+        return;
+    }
+    
+    // Show loading state
+    setButtonLoading('verifyOtpBtn', 'verifySpinner', 'verifyBtnText', true);
+    
+    // Send AJAX request to verify OTP
+    fetch('<?php echo e(route("agent.verify.otp")); ?>', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        setButtonLoading('verifyOtpBtn', 'verifySpinner', 'verifyBtnText', false);
+        
+        if (data.success) {
+            showMessage('success', data.message);
+            // Clear the timer when verification is successful
+            clearInterval(resendTimer);
+            // Redirect after a short delay to show the success message
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 2000);
+        } else {
+            showMessage('danger', data.message);
+        }
+    })
+    .catch(error => {
+        setButtonLoading('verifyOtpBtn', 'verifySpinner', 'verifyBtnText', false);
+        console.error('Error:', error);
+        showMessage('danger', 'An error occurred. Please try again.');
+    });
+}
+
+function goBackToStep1() {
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    // Clear the timer when going back
+    clearInterval(resendTimer);
+    
+    // Reset the resend link
+    const resendLink = document.getElementById('resendOtpLink');
+    resendLink.innerHTML = 'Resend OTP';
+    resendLink.onclick = function() { resendOTP(); };
+    resendLink.style.pointerEvents = 'auto';
+    resendLink.style.color = '';
+    resendLink.style.cursor = 'pointer';
+}
+
+// OTP input navigation
+document.addEventListener('DOMContentLoaded', function() {
+    const otpInputs = document.querySelectorAll('.otp-input');
+    
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function() {
+            if (this.value.length === 1 && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+        
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+        
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text').slice(0, 4);
+            
+            for (let i = 0; i < pasteData.length && i < otpInputs.length; i++) {
+                otpInputs[i].value = pasteData[i];
+            }
+            
+            if (pasteData.length === 4) {
+                otpInputs[3].focus();
+            } else if (pasteData.length > 0) {
+                otpInputs[pasteData.length - 1].focus();
+            }
+        });
+    });
+});
+</script>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('others.others_layout.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ADMIN\Desktop\listr\resources\views/others/authentication/agent-register.blade.php ENDPATH**/ ?>

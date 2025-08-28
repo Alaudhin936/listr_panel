@@ -1,0 +1,520 @@
+@extends('others.others_layout.master')
+
+@section('others_css')
+<style>
+    /* Prevent window scrolling */
+    body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+    }
+    
+    /* Main container using Bootstrap grid */
+    .container-fluid {
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .row {
+        height: 100%;
+        margin: 0;
+    }
+    
+    /* Image column - fixed position */
+    .col-image {
+        padding: 0;
+        height: 100vh;
+        position: relative;
+    }
+    
+    .fixed-image {
+        width: 100%;
+        height: 100vh;
+        object-fit: cover;
+        position: sticky;
+        top: 0;
+    }
+    
+    /* Form column - scrollable */
+    .col-form {
+        padding: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .login-card {
+        padding: 2rem;
+    }
+    
+    /* Form styling */
+    .theme-form {
+        max-width: 100%;
+    }
+    
+    /* Nav tabs styling */
+    .nav-tabs {
+        border-bottom: none;
+        margin-bottom: 1.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+        border: none;
+        color: #6c757d;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+    }
+    
+    .nav-tabs .nav-link.active {
+        color: #000;
+        border-bottom: 2px solid #000;
+    }
+    
+    /* Error messages */
+    .text-danger {
+        display: block;
+        margin-top: 0.25rem;
+        font-size: 0.875rem;
+    }
+
+    /* OTP input styling */
+    .otp-inputs {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin: 20px 0;
+    }
+    
+    .otp-input {
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
+    
+    .otp-input:focus {
+        border-color: #007bff;
+        outline: none;
+        background: #fff;
+    }
+    
+    /* Hidden form steps */
+    .form-step {
+        display: none;
+    }
+    
+    .form-step.active {
+        display: block;
+    }
+    
+    /* Loading spinner */
+    .spinner-border {
+        width: 1rem;
+        height: 1rem;
+        margin-right: 0.5rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 767.98px) {
+        .col-image {
+            display: none;
+        }
+        .col-form {
+            width: 100%;
+        }
+        
+        .otp-input {
+            width: 40px;
+            height: 40px;
+            font-size: 16px;
+        }
+    }
+</style>
+@endsection
+
+@section('others_content')
+<head>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<div class="container-fluid p-0">
+    <div class="row m-0">
+        <div class="col-md-6 p-0 col-image">  
+            <img src="{{asset('/assets/images/left.png')}}" class="fixed-image">
+        </div>
+        <div class="col-md-6 p-0 col-form">    
+            <div class="login-card">
+                <div>
+                    <div><a class="logo"><img class="for-light" src="{{ asset('assets/images/listrlogo.png') }}" alt="loginpage" style="width:90px;"></a></div>
+                    <div class="login-main">
+                        <div class="text-center mb-3">
+                            <label class="me-2">Don't have account?</label>
+                            <select class="form-select d-inline-block" style="width:220px"  onchange="handleAccountSelection(this)">
+                                <option value="">Create Account</option>
+                                <option value="{{ route('agency.signup') }}">Agency</option>
+                                <option value="{{ route('agent.register') }}">Agent</option>
+                            </select>
+                        </div>
+
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('login') }}">Agency Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#">Agent Login</a>
+                            </li>
+                        </ul>
+
+                        <!-- Success/Error Messages -->
+                        <div id="messageContainer"></div>
+
+                        <!-- Step 1: Login Form -->
+                        <div id="loginStep1" class="form-step active">
+                            <form class="theme-form mt-4" id="loginForm">
+                                @csrf
+                                <h4 class="text-center">Agent Login</h4>
+                                <p class="text-center">Enter your email or phone number</p>
+                                
+                                <div class="form-group">
+                                    <label class="col-form-label">Email or Phone</label>
+                                    <input class="form-control" type="text" name="username" value="{{ old('username') }}" required placeholder="Enter email or phone number">
+                                    @error('username')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+                                
+                                <div class="form-group mb-0">
+                                    <div class="text-end mt-3">
+                                        <button class="btn btn-dark btn-block w-100" type="button" onclick="sendLoginOTP()" id="sendOtpBtn">
+                                            <span class="spinner-border spinner-border-sm d-none" id="otpSpinner"></span>
+                                            <span id="otpBtnText">Send OTP</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Step 2: OTP Verification -->
+                        <div id="loginStep2" class="form-step">
+                            <form class="theme-form mt-4" id="loginOtpForm">
+                                @csrf
+                                <input type="hidden" name="username" id="loginUsername">
+                                <h4 class="text-center">Verify OTP</h4>
+                                <p class="text-center">Enter the 4-digit code sent to you</p>
+                                
+                                <div class="otp-inputs">
+                                    <input type="text" class="otp-input" maxlength="1" name="otp1" required>
+                                    <input type="text" class="otp-input" maxlength="1" name="otp2" required>
+                                    <input type="text" class="otp-input" maxlength="1" name="otp3" required>
+                                    <input type="text" class="otp-input" maxlength="1" name="otp4" required>
+                                </div>
+                                
+                                <div class="text-center mb-3">
+                                    <small class="text-muted">Didn't receive the code? <a href="#" onclick="resendLoginOTP()" id="resendOtpLink">Resend OTP</a></small>
+                                </div>
+                                
+                                <div class="form-group mb-0">
+                                    <div class="checkbox p-0">
+                                        <input id="remember-agent" type="checkbox" name="remember">
+                                        <label class="text-muted" for="remember-agent">Remember me</label>
+                                    </div>
+                                    <div class="text-end mt-3">
+                                        <button class="btn btn-secondary me-2" type="button" onclick="goBackToLoginStep1()">Back</button>
+                                        <button class="btn btn-dark" type="button" onclick="verifyLoginOTP()" id="verifyOtpBtn">
+                                            <span class="spinner-border spinner-border-sm d-none" id="verifySpinner"></span>
+                                            <span id="verifyBtnText">Verify & Sign In</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('others_script')
+<script>
+// Timer variables
+let resendTimer;
+let timeLeft = 30;
+
+function showMessage(type, message) {
+    const messageContainer = document.getElementById('messageContainer');
+    messageContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) {
+            alert.remove();
+        }
+    }, 5000);
+}
+
+function setButtonLoading(buttonId, spinnerId, btnTextId, isLoading) {
+    const spinner = document.getElementById(spinnerId);
+    const btnText = document.getElementById(btnTextId);
+    const button = document.getElementById(buttonId);
+    
+    if (isLoading) {
+        spinner.classList.remove('d-none');
+        btnText.textContent = 'Processing...';
+        button.disabled = true;
+    } else {
+        spinner.classList.add('d-none');
+        if (buttonId === 'sendOtpBtn') {
+            btnText.textContent = 'Send OTP';
+        } else {
+            btnText.textContent = 'Verify & Sign In';
+        }
+        button.disabled = false;
+    }
+}
+
+// Function to start the resend timer
+function startResendTimer() {
+    const resendLink = document.getElementById('resendOtpLink');
+    
+    // Clear any existing timer
+    clearInterval(resendTimer);
+    
+    // Disable the resend link
+    resendLink.onclick = null;
+    resendLink.style.pointerEvents = 'none';
+    resendLink.style.color = '#6c757d';
+    resendLink.style.cursor = 'not-allowed';
+    
+    // Set initial time
+    timeLeft = 30;
+    resendLink.innerHTML = `Resend OTP (${timeLeft}s)`;
+    
+    // Start the countdown
+    resendTimer = setInterval(() => {
+        timeLeft--;
+        
+        if (timeLeft <= 0) {
+            // Enable the resend link
+            clearInterval(resendTimer);
+            resendLink.innerHTML = 'Resend OTP';
+            resendLink.onclick = function() { resendLoginOTP(); };
+            resendLink.style.pointerEvents = 'auto';
+            resendLink.style.color = '';
+            resendLink.style.cursor = 'pointer';
+        } else {
+            // Update the timer text
+            resendLink.innerHTML = `Resend OTP (${timeLeft}s)`;
+        }
+    }, 1000);
+}
+
+function sendLoginOTP() {
+    const form = document.getElementById('loginForm');
+    const formData = new FormData(form);
+    
+    // Validate form first
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+    
+    // Show loading state
+    setButtonLoading('sendOtpBtn', 'otpSpinner', 'otpBtnText', true);
+    
+    // Send AJAX request to generate OTP
+    fetch('{{ route("agent.login.send.otp") }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        setButtonLoading('sendOtpBtn', 'otpSpinner', 'otpBtnText', false);
+        
+        if (data.success) {
+            document.getElementById('loginUsername').value = formData.get('username');
+            document.getElementById('loginStep1').classList.remove('active');
+            document.getElementById('loginStep2').classList.add('active');
+            showMessage('success', data.message);
+            
+            // Start the resend timer
+            startResendTimer();
+        } else {
+            showMessage('danger', data.message);
+        }
+    })
+    .catch(error => {
+        setButtonLoading('sendOtpBtn', 'otpSpinner', 'otpBtnText', false);
+        console.error('Error:', error);
+        showMessage('danger', 'An error occurred. Please try again.');
+    });
+}
+
+function resendLoginOTP() {
+    const username = document.getElementById('loginUsername').value;
+    const resendLink = document.getElementById('resendOtpLink');
+    
+    if (!username) {
+        showMessage('danger', 'Username not found. Please go back and enter your email/phone again.');
+        return;
+    }
+    
+    resendLink.textContent = 'Sending...';
+    resendLink.onclick = null;
+    resendLink.style.pointerEvents = 'none';
+    
+    fetch('{{ route("agent.login.resend.otp") }}', {
+        method: 'POST',
+        body: JSON.stringify({ username: username }),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showMessage('success', data.message);
+            
+            // Restart the timer after successful resend
+            startResendTimer();
+        } else {
+            showMessage('danger', data.message);
+            resendLink.textContent = 'Resend OTP';
+            resendLink.onclick = function() { resendLoginOTP(); };
+            resendLink.style.pointerEvents = 'auto';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showMessage('danger', 'Failed to resend OTP.');
+        resendLink.textContent = 'Resend OTP';
+        resendLink.onclick = function() { resendLoginOTP(); };
+        resendLink.style.pointerEvents = 'auto';
+    });
+}
+
+function verifyLoginOTP() {
+    const form = document.getElementById('loginOtpForm');
+    const formData = new FormData(form);
+    
+    // Validate OTP inputs
+    const otpInputs = document.querySelectorAll('.otp-input');
+    let otpComplete = true;
+    
+    for (let i = 0; i < otpInputs.length; i++) {
+        if (!otpInputs[i].value) {
+            otpComplete = false;
+            break;
+        }
+    }
+    
+    if (!otpComplete) {
+        showMessage('danger', 'Please enter the complete 4-digit OTP code.');
+        return;
+    }
+    
+    // Show loading state
+    setButtonLoading('verifyOtpBtn', 'verifySpinner', 'verifyBtnText', true);
+    
+    // Send AJAX request to verify OTP
+    fetch('{{ route("agent.login.verify.otp") }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        setButtonLoading('verifyOtpBtn', 'verifySpinner', 'verifyBtnText', false);
+        
+        if (data.success) {
+            showMessage('success', data.message);
+            // Clear the timer when verification is successful
+            clearInterval(resendTimer);
+            // Redirect after a short delay to show the success message
+            setTimeout(() => {
+                window.location.href = data.redirect;
+            }, 2000);
+        } else {
+            showMessage('danger', data.message);
+        }
+    })
+    .catch(error => {
+        setButtonLoading('verifyOtpBtn', 'verifySpinner', 'verifyBtnText', false);
+        console.error('Error:', error);
+        showMessage('danger', 'An error occurred. Please try again.');
+    });
+}
+
+function goBackToLoginStep1() {
+    document.getElementById('loginStep2').classList.remove('active');
+    document.getElementById('loginStep1').classList.add('active');
+    // Clear the timer when going back
+    clearInterval(resendTimer);
+    
+    // Reset the resend link
+    const resendLink = document.getElementById('resendOtpLink');
+    resendLink.innerHTML = 'Resend OTP';
+    resendLink.onclick = function() { resendLoginOTP(); };
+    resendLink.style.pointerEvents = 'auto';
+    resendLink.style.color = '';
+    resendLink.style.cursor = 'pointer';
+}
+
+function handleAccountSelection(selectElement) {
+    if (selectElement.value) {
+        window.location.href = selectElement.value;
+    }
+}
+
+// OTP input navigation
+document.addEventListener('DOMContentLoaded', function() {
+    const otpInputs = document.querySelectorAll('.otp-input');
+    
+    otpInputs.forEach((input, index) => {
+        input.addEventListener('input', function() {
+            if (this.value.length === 1 && index < otpInputs.length - 1) {
+                otpInputs[index + 1].focus();
+            }
+        });
+        
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                otpInputs[index - 1].focus();
+            }
+        });
+        
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pasteData = e.clipboardData.getData('text').slice(0, 4);
+            
+            for (let i = 0; i < pasteData.length && i < otpInputs.length; i++) {
+                otpInputs[i].value = pasteData[i];
+            }
+            
+            if (pasteData.length === 4) {
+                otpInputs[3].focus();
+            } else if (pasteData.length > 0) {
+                otpInputs[pasteData.length - 1].focus();
+            }
+        });
+    });
+});
+</script>
+@endsection

@@ -1,0 +1,127 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up()
+    {
+        Schema::create('conduct_appraisals', function (Blueprint $table) {
+            $table->id();
+            
+            // Basic information
+            $table->string('address');
+            $table->string('property_type')->nullable();
+            $table->integer('land_size')->nullable();
+            $table->integer('bedrooms')->nullable();
+            $table->integer('bathrooms')->nullable();
+            $table->integer('living_areas')->nullable();
+            $table->integer('study')->nullable();
+            $table->integer('under_cover_parking')->nullable();
+            $table->string('under_cover_parking_type')->nullable();
+            $table->string('condition')->nullable();
+            $table->text('what_was_updated')->nullable();
+            
+            // Vendor information
+            $table->string('vendor1_first_name');
+            $table->string('vendor1_last_name');
+            $table->string('vendor1_mobile');
+            $table->string('vendor1_email');
+            $table->string('vendor2_first_name')->nullable();
+            $table->string('vendor2_last_name')->nullable();
+            $table->string('vendor2_mobile')->nullable();
+            $table->string('vendor2_email')->nullable();
+            
+            // Main contact information
+            $table->string('main_contact_name')->nullable();
+            $table->string('main_contact_phone')->nullable();
+            $table->string('main_contact_email')->nullable();
+            
+            // Property details
+            $table->string('single_double_storey')->nullable();
+            $table->string('approximate_year_built')->nullable();
+            $table->json('outdoor_features')->nullable();
+            $table->string('exterior_material')->nullable();
+            $table->string('overall_property_condition')->nullable();
+            $table->string('vendor_motivation')->nullable();
+            
+            // Agent notes and photos
+            $table->text('agent_notes')->nullable();
+            $table->json('property_photos')->nullable();
+            
+            // Recommended trades
+            $table->json('recommended_trades')->nullable();
+            $table->string('who_contacts_who')->nullable();
+            $table->boolean('privacy_consent')->default(false);
+            
+            // Follow-up messages
+            $table->string('follow_up_sms_type')->nullable();
+            $table->text('sms_preview')->nullable();
+            $table->string('follow_up_email_type')->nullable();
+            $table->text('email_preview')->nullable();
+            
+            // Proposal information
+            $table->boolean('send_proposal')->default(false);
+            $table->boolean('include_price')->default(false);
+            $table->string('price_information')->nullable();
+            $table->string('method')->nullable();
+            $table->date('auction_eoi_date')->nullable();
+            $table->boolean('include_other_dates')->default(false);
+            $table->date('photography_date')->nullable();
+            $table->date('internet_launch_date')->nullable();
+            $table->date('first_open_date')->nullable();
+            $table->string('marketing')->nullable();
+            $table->string('other_schedule')->nullable();
+            $table->string('commission')->nullable();
+            $table->string('second_agent')->nullable();
+            $table->string('other_agent')->nullable();
+            $table->boolean('include_comparable_sales')->default(false);
+            $table->text('comparable_sales')->nullable();
+            $table->boolean('add_personal_message')->default(false);
+            $table->text('personalized_message')->nullable();
+            $table->string('proposal_recipient')->nullable();
+            $table->string('custom_email')->nullable();
+            
+            // Marketing and commission
+            $table->boolean('commission_discussed')->default(false);
+            $table->string('commission_details')->nullable();
+            $table->boolean('marketing_discussed')->default(false);
+            $table->json('marketing_discussion_summary')->nullable();
+            $table->string('dollar_amount_range')->nullable();
+            $table->text('requested_changes')->nullable();
+            
+            // Method of sale and key dates
+            $table->string('method_of_sale')->nullable();
+            $table->boolean('key_dates_discussed')->default(false);
+            $table->date('preferred_launch_week')->nullable();
+            $table->date('ready_for_photography')->nullable();
+            $table->text('other_relevant_dates')->nullable();
+            
+            // Final notes
+            $table->text('final_notes')->nullable();
+            
+            // Foreign keys
+            $table->unsignedBigInteger('agent_id')->nullable();
+            $table->unsignedBigInteger('agency_id')->nullable();
+            $table->unsignedBigInteger('hotleads_id')->nullable();
+            $table->unsignedBigInteger('booking_appraisal_id')->nullable();
+            $table->boolean('converted_to_just_listed')->default(false);
+            
+            // Timestamps
+            $table->timestamps();
+            
+            // Foreign key constraints
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null');
+            $table->foreign('agency_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('hotleads_id')->references('id')->on('hot_leads')->onDelete('set null');
+            $table->foreign('booking_appraisal_id')->references('id')->on('booking_appraisals')->onDelete('set null');
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('conduct_appraisals');
+    }
+};
