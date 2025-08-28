@@ -9,10 +9,10 @@ return new class extends Migration {
     {
         Schema::create('booking_appraisals', function (Blueprint $table) {
             $table->id();
-$table->unsignedBigInteger('agency_id')->nullable();
-$table->unsignedBigInteger('agent_id')->nullable();
-         $table->foreign('agency_id')->references('id')->on('users')->onDelete('set null');
-$table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null');
+            $table->unsignedBigInteger('agency_id')->nullable();
+            $table->unsignedBigInteger('agent_id')->nullable();
+            $table->foreign('agency_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null');
 
             // Property Details
             $table->string('address')->nullable();
@@ -20,7 +20,7 @@ $table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null'
             $table->integer('bedrooms')->nullable();
             $table->integer('bathrooms')->nullable();
             $table->integer('living_areas')->nullable();
-            $table->integer('study')->nullable();
+            $table->string('study')->nullable();
             $table->integer('under_cover_parking')->nullable();
             $table->string('condition')->nullable();
             $table->text('what_was_updated')->nullable();
@@ -38,6 +38,20 @@ $table->foreign('agent_id')->references('id')->on('agents')->onDelete('set null'
             $table->string('vendor2_mobile')->nullable();
             $table->string('vendor2_email')->nullable();
 
+            $table->string('someone_first_name')->nullable();
+            $table->string('someone_last_name')->nullable();
+
+
+
+            $table->text('comparable_types')->nullable();
+            $table->string('comparable_date_range')->nullable();
+
+            $table->string('comparable_notes')->nullable();
+            $table->string('who_is_preparing')->nullable();
+
+
+            $table->string('vendor_moving_to')->nullable();
+            $table->string('property_listed_when')->nullable();
             // Appointment Details
             $table->date('appointment_date')->nullable();
             $table->time('appointment_time')->nullable();

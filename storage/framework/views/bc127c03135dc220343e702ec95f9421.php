@@ -37,61 +37,193 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="card-header card-head1 pb-0">
-                                                    <h4 class="ven-head1"><span>Property Information</span></h4>
+                                                    <h4 class="ven-head1"><span>Property Address</span></h4>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <div class="mb-6">
+                                                    <textarea class="form-control" id="address" name="address" placeholder="Enter property address" required><?php echo e(isset($hotlead) ? $hotlead->vendor_address : old('address')); ?></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="card-header card-head1 pb-0">
+                                                    <h4 class="ven-head1"><span>Vendor 1 Information</span></h4>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="address">Address *</label>
-                                                    <input class="form-control" id="address" name="address" type="text"
-                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_address : old('address')); ?>"
-                                                        placeholder="Enter property address" required>
+                                                    <label class="form-label" for="vendor1_first_name">First Name
+                                                        *</label>
+                                                    <input class="form-control" id="vendor1_first_name"
+                                                        name="vendor1_first_name" type="text"
+                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_first_name : old('vendor1_first_name')); ?>"
+                                                        placeholder="Enter first name" required>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="property_type">Property Type *</label>
-                                                    <select class="form-control" id="property_type" name="property_type"
-                                                        required>
-                                                        <option value="">Select Property Type</option>
-                                                        <option value="House"
-                                                            <?php echo e(old('property_type') == 'House' ? 'selected' : ''); ?>>House
-                                                        </option>
-                                                        <option value="Unit"
-                                                            <?php echo e(old('property_type') == 'Unit' ? 'selected' : ''); ?>>Unit
-                                                        </option>
-                                                        <option value="Townhouse"
-                                                            <?php echo e(old('property_type') == 'Townhouse' ? 'selected' : ''); ?>>
-                                                            Townhouse</option>
-                                                        <option value="Apartment"
-                                                            <?php echo e(old('property_type') == 'Apartment' ? 'selected' : ''); ?>>
-                                                            Apartment</option>
-                                                        <option value="Land"
-                                                            <?php echo e(old('property_type') == 'Land' ? 'selected' : ''); ?>>Land
-                                                        </option>
-                                                        <option value="Acreage"
-                                                            <?php echo e(old('property_type') == 'Acreage' ? 'selected' : ''); ?>>
-                                                            Acreage</option>
-                                                        <option value="Rural"
-                                                            <?php echo e(old('property_type') == 'Rural' ? 'selected' : ''); ?>>Rural
-                                                        </option>
-                                                        <option value="Block of Units"
-                                                            <?php echo e(old('property_type') == 'Block of Units' ? 'selected' : ''); ?>>
-                                                            Block of Units</option>
-                                                    </select>
+                                                    <label class="form-label" for="vendor1_last_name">Last Name *</label>
+                                                    <input class="form-control" id="vendor1_last_name"
+                                                        name="vendor1_last_name" type="text"
+                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_last_name : old('vendor1_last_name')); ?>"
+                                                        placeholder="Enter last name" required>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="land_size">Land Size</label>
-                                                    <input class="form-control" id="land_size" name="land_size"
-                                                        type="text" value="<?php echo e(old('land_size')); ?>"
-                                                        placeholder="Enter land size">
+                                                    <label class="form-label" for="vendor1_mobile">Mobile *</label>
+                                                    <input class="form-control" id="vendor1_mobile" name="vendor1_mobile"
+                                                        type="text"
+                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_mobile : old('vendor1_mobile')); ?>"
+                                                        placeholder="Enter mobile number" required>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="vendor1_email">Email *</label>
+                                                    <input class="form-control" id="vendor1_email" name="vendor1_email"
+                                                        type="email"
+                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_email : old('vendor1_email')); ?>"
+                                                        placeholder="Enter email address" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-12">
+                                                <label class="form-label">Add Vendor?</label>
+                                                <div class="mb-3 m-t-15 custom-radio-ml">
+                                                    <div class="form-check radio radio-primary">
+                                                        <input class="form-check-input" id="has_additional_vendor_yes"
+                                                            type="radio" name="has_additional_vendor" value="1">
+                                                        <label class="form-check-label"
+                                                            for="has_additional_vendor_yes">Yes</label>
+                                                    </div>
+                                                    <div class="form-check radio radio-primary">
+                                                        <input class="form-check-input" id="has_additional_vendor_no"
+                                                            type="radio" name="has_additional_vendor" value="0">
+                                                        <label class="form-check-label"
+                                                            for="has_additional_vendor_no">No</label>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Vendor 2 Fields (Hidden by default) -->
+
+                                                <div id="vendor2Fields" style="display: none;">
+                                                    <div class="col-md-12">
+                                                        <div class="card-header card-head1 pb-0">
+                                                            <h4 class="ven-head1"><span>Vendor 2 Information (if
+                                                                    applicable)</span>
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="vendor2_first_name">First
+                                                                    Name</label>
+                                                                <input class="form-control" id="vendor2_first_name"
+                                                                    name="vendor2_first_name" type="text"
+                                                                    placeholder="First Name">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label" for="vendor2_last_name">Last
+                                                                    Name</label>
+                                                                <input class="form-control" id="vendor2_last_name"
+                                                                    name="vendor2_last_name" type="text"
+                                                                    placeholder="Last Name">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label"
+                                                                    for="vendor2_mobile">Mobile</label>
+                                                                <input class="form-control" id="vendor2_mobile"
+                                                                    name="vendor2_mobile" type="text" placeholder="">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label class="form-label"
+                                                                    for="vendor2_email">Email</label>
+                                                                <input class="form-control" id="vendor2_email"
+                                                                    name="vendor2_email" type="email" placeholder="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Main contact choice -->
+                                                <div class="col-md-12">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Main point of contact</label>
+                                                        <div class="form-check radio radio-primary">
+                                                            <input class="form-check-input" id="main_contact_vendor1"
+                                                                type="radio" name="main_contact" value="Vendor 1">
+                                                            <label class="form-check-label"
+                                                                for="main_contact_vendor1">Vendor 1</label>
+                                                        </div>
+                                                        <div class="form-check radio radio-primary">
+                                                            <input class="form-check-input" id="main_contact_vendor2"
+                                                                type="radio" name="main_contact" value="Vendor 2">
+                                                            <label class="form-check-label"
+                                                                for="main_contact_vendor2">Vendor 2</label>
+                                                        </div>
+                                                        <div class="form-check radio radio-primary">
+                                                            <input class="form-check-input" id="main_contact_someone_else"
+                                                                type="radio" name="main_contact" value="Someone Else">
+                                                            <label class="form-check-label"
+                                                                for="main_contact_someone_else">Someone Else</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Someone Else fields (hidden by default) -->
+                                                <div id="someone-else-fields" style="display: none;">
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="main_contact_first_name">Main
+                                                                contact's first name</label>
+                                                            <input class="form-control" id="main_contact_first_name"
+                                                                name="someone_first_name" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label" for="main_contact_last_name">Last
+                                                                name</label>
+                                                            <input class="form-control" id="main_contact_last_name"
+                                                                name="someone_last_name" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label"
+                                                                for="main_contact_mobile">Mobile</label>
+                                                            <input class="form-control" id="main_contact_mobile"
+                                                                name="someone_mobile" type="text">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="mb-3">
+                                                            <label class="form-label"
+                                                                for="main_contact_email">Email</label>
+                                                            <input class="form-control" id="main_contact_email"
+                                                                name="someone_email" type="email">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
                                             <div class="col-md-12">
                                                 <div class="card-header card-head1 pb-0">
                                                     <h4 class="ven-head1"><span>Appointment Details</span></h4>
@@ -164,25 +296,80 @@
                                                     <select class="form-control" id="category" name="category">
                                                         <option value="">Select category</option>
                                                         <option value="Hot"
-                                                            <?php echo e((isset($hotlead) && $hotlead->category == 'hot') || old('category') == 'Hot' ? 'selected' : ''); ?>>
-                                                            Hot</option>
+                                                            <?php echo e((isset($hotlead) && strtolower($hotlead->category) == 'hot') || old('category') == 'Hot' ? 'selected' : ''); ?>>
+                                                            Hot
+                                                        </option>
                                                         <option value="Warm"
-                                                            <?php echo e((isset($hotlead) && $hotlead->category == 'warm') || old('category') == 'Warm' ? 'selected' : ''); ?>>
-                                                            Warm</option>
+                                                            <?php echo e((isset($hotlead) && strtolower($hotlead->category) == 'warm') || old('category') == 'Warm' ? 'selected' : ''); ?>>
+                                                            Warm
+                                                        </option>
                                                         <option value="Cold"
-                                                            <?php echo e((isset($hotlead) && $hotlead->category == 'cold') || old('category') == 'Cold' ? 'selected' : ''); ?>>
-                                                            Cold</option>
+                                                            <?php echo e((isset($hotlead) && strtolower($hotlead->category) == 'cold') || old('category') == 'Cold' ? 'selected' : ''); ?>>
+                                                            Cold
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div id="hot-questions" style="display: none;">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="vendor_moving_to">Where is the
+                                                            vendor moving to?</label>
+                                                        <input type="text" class="form-control" id="vendor_moving_to"
+                                                            name="vendor_moving_to"
+                                                            value="<?php echo e(old('vendor_moving_to')); ?>">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label class="form-label" for="property_listed_when">When are they
+                                                            looking to have their property listed?</label>
+                                                        <input type="date" class="form-control"
+                                                            id="property_listed_when" name="property_listed_when"
+                                                            value="<?php echo e(old('property_listed_when')); ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+
 
                                             <div class="col-md-12">
                                                 <div class="card-header card-head1 pb-0">
                                                     <h4 class="ven-head1"><span>Property Details</span></h4>
                                                 </div>
                                             </div>
-
-                                            <!-- Bedrooms -->
+                                            <div class="col-md-6">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="property_type">Property Type *</label>
+                                                    <select class="form-control" id="property_type" name="property_type"
+                                                        required>
+                                                        <option value="">Select Property Type</option>
+                                                        <option value="House"
+                                                            <?php echo e(old('property_type') == 'House' ? 'selected' : ''); ?>>House
+                                                        </option>
+                                                        <option value="Unit"
+                                                            <?php echo e(old('property_type') == 'Unit' ? 'selected' : ''); ?>>Unit
+                                                        </option>
+                                                        <option value="Townhouse"
+                                                            <?php echo e(old('property_type') == 'Townhouse' ? 'selected' : ''); ?>>
+                                                            Townhouse</option>
+                                                        <option value="Apartment"
+                                                            <?php echo e(old('property_type') == 'Apartment' ? 'selected' : ''); ?>>
+                                                            Apartment</option>
+                                                        <option value="Land"
+                                                            <?php echo e(old('property_type') == 'Land' ? 'selected' : ''); ?>>Land
+                                                        </option>
+                                                        <option value="Acreage"
+                                                            <?php echo e(old('property_type') == 'Acreage' ? 'selected' : ''); ?>>
+                                                            Acreage</option>
+                                                        <option value="Rural"
+                                                            <?php echo e(old('property_type') == 'Rural' ? 'selected' : ''); ?>>Rural
+                                                        </option>
+                                                        <option value="Block of Units"
+                                                            <?php echo e(old('property_type') == 'Block of Units' ? 'selected' : ''); ?>>
+                                                            Block of Units</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Bedrooms</label>
@@ -194,8 +381,7 @@
                                                         <button type="button" class="option-btn" data-field="bedrooms"
                                                             data-value="3">3</button>
                                                         <button type="button" class="option-btn" data-field="bedrooms"
-                                                            data-value="4">4</button>
-                                                        
+                                                            data-value="4+">4+</button>
                                                     </div>
                                                     <input type="hidden" id="bedrooms" name="bedrooms"
                                                         value="<?php echo e(old('bedrooms')); ?>">
@@ -220,8 +406,7 @@
                                                         <button type="button" class="option-btn" data-field="bathrooms"
                                                             data-value="3">3</button>
                                                         <button type="button" class="option-btn" data-field="bathrooms"
-                                                            data-value="4">4</button>
-                                                        
+                                                            data-value="4+">4+</button>
                                                     </div>
                                                     <input type="hidden" id="bathrooms" name="bathrooms"
                                                         value="<?php echo e(old('bathrooms')); ?>">
@@ -246,8 +431,7 @@
                                                         <button type="button" class="option-btn"
                                                             data-field="living_areas" data-value="3">3</button>
                                                         <button type="button" class="option-btn"
-                                                            data-field="living_areas" data-value="4">4</button>
-                                                        
+                                                            data-field="living_areas" data-value="4+">4+</button>
                                                     </div>
                                                     <input type="hidden" id="living_areas" name="living_areas"
                                                         value="<?php echo e(old('living_areas')); ?>">
@@ -265,25 +449,24 @@
                                                 <div class="mb-3">
                                                     <label class="form-label">Study</label>
                                                     <div class="button-group">
-                                                        <button type="button" class="option-btn" data-field="study"
-                                                            data-value="1">1</button>
-                                                        <button type="button" class="option-btn" data-field="study"
-                                                            data-value="2">2</button>
-                                                        <button type="button" class="option-btn" data-field="study"
-                                                            data-value="3">3</button>
-                                                        
+                                                        <button type="button" class="option-btn" data-field="prop-study"
+                                                            data-value="N/A">N/A</button>
+                                                        <button type="button" class="option-btn" data-field="prop-study"
+                                                            data-value="Study Nook">Study Nook</button>
+                                                        <button type="button" class="option-btn" data-field="prop-study"
+                                                            data-value="Separate Study">Separate Study</button>
+                                                       
                                                     </div>
-                                                    <input type="hidden" id="study" name="study"
+                                                    <input type="hidden" id="prop-study" name="study"
                                                         value="<?php echo e(old('study')); ?>">
-                                                    <div class="custom-input-container" id="study-custom"
-                                                        style="display: none;">
-                                                        <label class="form-label">Enter number of studies:</label>
-                                                        <input type="number" class="form-control" min="6"
-                                                            placeholder="Enter number" style="max-width: 200px;">
+                                                    <div class="custom-input-container" id="prop-study-custom"
+                                                        style="display:none; margin-top:10px;">
+                                                        <input type="number" class="form-control" min="5"
+                                                            placeholder="Enter number of studies"
+                                                            style="max-width:200px;">
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <!-- Under Cover Parking -->
                                             <div class="col-md-12">
                                                 <div class="mb-3">
@@ -293,7 +476,10 @@
                                                             data-field="under_cover_parking" data-value="1">1</button>
                                                         <button type="button" class="option-btn"
                                                             data-field="under_cover_parking" data-value="2">2</button>
-                                                        
+                                                        <button type="button" class="option-btn"
+                                                            data-field="under_cover_parking" data-value="3">3</button>
+                                                        <button type="button" class="option-btn"
+                                                            data-field="under_cover_parking" data-value="4+">4+</button>
                                                     </div>
                                                     <input type="hidden" id="under_cover_parking"
                                                         name="under_cover_parking"
@@ -301,7 +487,7 @@
                                                     <div class="custom-input-container" id="under_cover_parking-custom"
                                                         style="display: none;">
                                                         <label class="form-label">Enter number of parking spaces:</label>
-                                                        <input type="number" class="form-control" min="6"
+                                                        <input type="number" class="form-control" min="5"
                                                             placeholder="Enter number" style="max-width: 200px;">
                                                     </div>
                                                 </div>
@@ -322,6 +508,9 @@
                                                         <option value="Carport"
                                                             <?php echo e(old('under_cover_parking_type') == 'Carport' ? 'selected' : ''); ?>>
                                                             Carport</option>
+                                                        <option value="Garage + Carport"
+                                                            <?php echo e(old('under_cover_parking_type') == 'Carport' ? 'selected' : ''); ?>>
+                                                            Garage + Carport</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -356,6 +545,25 @@
                                                 </div>
                                             </div>
 
+                                            <!-- Parking Type -->
+                                            <div class="col-md-6" id="under_cover_parking_type_div"
+                                                style="display:none;">
+                                                <div class="mb-3">
+                                                    <label class="form-label" for="under_cover_parking_type">Parking
+                                                        Type</label>
+                                                    <select class="form-select" id="under_cover_parking_type"
+                                                        name="under_cover_parking_type">
+                                                        <option value="">Select type</option>
+                                                        <option value="Garage"
+                                                            <?php echo e(old('under_cover_parking_type') == 'Garage' ? 'selected' : ''); ?>>
+                                                            Garage</option>
+                                                        <option value="Carport"
+                                                            <?php echo e(old('under_cover_parking_type') == 'Carport' ? 'selected' : ''); ?>>
+                                                            Carport</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="what_was_updated">What was updated and
@@ -364,186 +572,14 @@
                                                         placeholder="E.g. Kitchen 2022, bathroom 2015, flooring and paint 2019"><?php echo e(old('what_was_updated')); ?></textarea>
                                                 </div>
                                             </div>
-
-                                            <div class="col-md-12">
-                                                <div class="card-header card-head1 pb-0">
-                                                    <h4 class="ven-head1"><span>Vendor 1 Information</span></h4>
-                                                </div>
-                                            </div>
-
                                             <div class="col-md-6">
                                                 <div class="mb-3">
-                                                    <label class="form-label" for="vendor1_first_name">First Name
-                                                        *</label>
-                                                    <input class="form-control" id="vendor1_first_name"
-                                                        name="vendor1_first_name" type="text"
-                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_first_name : old('vendor1_first_name')); ?>"
-                                                        placeholder="Enter first name" required>
+                                                    <label class="form-label" for="land_size">Land Size (if known)</label>
+                                                    <input class="form-control" id="land_size" name="land_size"
+                                                        type="text" value="<?php echo e(old('land_size')); ?>"
+                                                        placeholder="Enter land size">
                                                 </div>
                                             </div>
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="vendor1_last_name">Last Name *</label>
-                                                    <input class="form-control" id="vendor1_last_name"
-                                                        name="vendor1_last_name" type="text"
-                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_last_name : old('vendor1_last_name')); ?>"
-                                                        placeholder="Enter last name" required>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="vendor1_mobile">Mobile *</label>
-                                                    <input class="form-control" id="vendor1_mobile" name="vendor1_mobile"
-                                                        type="text"
-                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_mobile : old('vendor1_mobile')); ?>"
-                                                        placeholder="Enter mobile number" required>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="vendor1_email">Email *</label>
-                                                    <input class="form-control" id="vendor1_email" name="vendor1_email"
-                                                        type="email"
-                                                        value="<?php echo e(isset($hotlead) ? $hotlead->vendor_email : old('vendor1_email')); ?>"
-                                                        placeholder="Enter email address" required>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <label class="form-label">Add Vendor?</label>
-                                                <div class="mb-3 m-t-15 custom-radio-ml">
-                                                    <div class="form-check radio radio-primary">
-                                                        <input class="form-check-input" id="has_additional_vendor_yes"
-                                                            type="radio" name="has_additional_vendor" value="1">
-                                                        <label class="form-check-label"
-                                                            for="has_additional_vendor_yes">Yes</label>
-                                                    </div>
-                                                    <div class="form-check radio radio-primary">
-                                                        <input class="form-check-input" id="has_additional_vendor_no"
-                                                            type="radio" name="has_additional_vendor" value="0">
-                                                        <label class="form-check-label"
-                                                            for="has_additional_vendor_no">No</label>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Vendor 2 Fields (Hidden by default) -->
-
-                                                <div id="vendor2Fields" style="display: none;">
-                                                     <div class="col-md-12">
-                                                    <div class="card-header card-head1 pb-0">
-                                                        <h4 class="ven-head1"><span>Vendor 2 Information (if
-                                                                applicable)</span>
-                                                        </h4>
-                                                    </div>
-                                                </div>
-                                                    <div class="row">
-                                                        
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label class="form-label" for="vendor2_first_name">First
-                                                                    Name</label>
-                                                                <input class="form-control" id="vendor2_first_name"
-                                                                    name="vendor2_first_name" type="text"
-                                                                    placeholder="First Name">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label class="form-label" for="vendor2_last_name">Last
-                                                                    Name</label>
-                                                                <input class="form-control" id="vendor2_last_name"
-                                                                    name="vendor2_last_name" type="text"
-                                                                    placeholder="Last Name">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label class="form-label"
-                                                                    for="vendor2_mobile">Mobile</label>
-                                                                <input class="form-control" id="vendor2_mobile"
-                                                                    name="vendor2_mobile" type="text" placeholder="">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label class="form-label"
-                                                                    for="vendor2_email">Email</label>
-                                                                <input class="form-control" id="vendor2_email"
-                                                                    name="vendor2_email" type="email" placeholder="">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Main contact choice -->
-                                                <div class="col-md-12">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Main point of contact</label>
-                                                        <div class="form-check radio radio-primary">
-                                                            <input class="form-check-input" id="main_contact_vendor1"
-                                                                type="radio" name="main_contact" value="Vendor 1">
-                                                            <label class="form-check-label"
-                                                                for="main_contact_vendor1">Vendor 1</label>
-                                                        </div>
-                                                        <div class="form-check radio radio-primary">
-                                                            <input class="form-check-input" id="main_contact_vendor2"
-                                                                type="radio" name="main_contact" value="Vendor 2">
-                                                            <label class="form-check-label"
-                                                                for="main_contact_vendor2">Vendor 2</label>
-                                                        </div>
-                                                        <div class="form-check radio radio-primary">
-                                                            <input class="form-check-input" id="main_contact_someone_else"
-                                                                type="radio" name="main_contact" value="Someone Else">
-                                                            <label class="form-check-label"
-                                                                for="main_contact_someone_else">Someone Else</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Someone Else fields (hidden by default) -->
-                                                <div id="someone-else-fields" style="display: none;">
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label class="form-label" for="main_contact_first_name">Main
-                                                                contact's first name</label>
-                                                            <input class="form-control" id="main_contact_first_name"
-                                                                name="main_contact_first_name" type="text">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label class="form-label" for="main_contact_last_name">Last
-                                                                name</label>
-                                                            <input class="form-control" id="main_contact_last_name"
-                                                                name="main_contact_last_name" type="text">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label class="form-label"
-                                                                for="main_contact_mobile">Mobile</label>
-                                                            <input class="form-control" id="main_contact_mobile"
-                                                                name="main_contact_mobile" type="text">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="mb-3">
-                                                            <label class="form-label"
-                                                                for="main_contact_email">Email</label>
-                                                            <input class="form-control" id="main_contact_email"
-                                                                name="main_contact_email" type="email">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-
 
 
                                             <div class="col-md-12 form-field-hidden" id="lead_source_notes_container"
@@ -556,31 +592,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-12">
-                                                <div class="card-header card-head1 pb-0">
-                                                    <h4 class="ven-head1"><span>Selling Details</span></h4>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="is_vendor_selling">Is The Vendor
-                                                        Selling? *</label>
-                                                    <select class="form-control" id="is_vendor_selling"
-                                                        name="is_vendor_selling" required>
-                                                        <option value="">Select Option</option>
-                                                        <option value="Yes"
-                                                            <?php echo e(old('is_vendor_selling') == 'Yes' ? 'selected' : ''); ?>>Yes
-                                                        </option>
-                                                        <option value="Not Sure"
-                                                            <?php echo e(old('is_vendor_selling') == 'Not Sure' ? 'selected' : ''); ?>>
-                                                            Not Sure</option>
-                                                        <option value="No"
-                                                            <?php echo e(old('is_vendor_selling') == 'No' ? 'selected' : ''); ?>>No
-                                                        </option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                                            
 
                                             <div class="col-md-6 form-field-hidden" id="moving_to_container"
                                                 style="display: none;">
@@ -605,16 +617,10 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="card-header card-head1 pb-0">
-                                                    <h4 class="ven-head1"><span>Confirmation Details</span></h4>
+                                                    <h4 class="ven-head1"><span>Smart Send</span></h4>
                                                 </div>
                                             </div>
 
-                                            <!-- SMS Section -->
-                                            <div class="col-md-12 mt-4">
-                                                <div class="card-header card-head1 pb-0">
-                                                    <h4>SMS Sample</h4>
-                                                </div>
-                                            </div>
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <label class="form-label">Follow Up SMS Template</label>
@@ -645,9 +651,9 @@
                                             </div>
 
                                             <!-- Email Section -->
-                                            <div class="col-md-12 mt-4">
+                                            <div class="col-md-12">
                                                 <div class="card-header card-head1 pb-0">
-                                                    <h4>Email Sample</h4>
+                                                    <h4 class="ven-head1"><span>Email Sample</span></h4>
                                                 </div>
                                             </div>
                                             <div class="col-md-12">
@@ -686,9 +692,6 @@
                                                 </div>
                                             </div>
 
-
-
-
                                             <div class="col-md-12 form-field-hidden" id="message_preview_container"
                                                 style="display: none;">
                                                 <div class="mb-3">
@@ -717,31 +720,10 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-6">
-                                                <div class="mb-3">
-                                                    <label class="form-label" for="comparable_sales">Comparable Sales
-                                                        Required</label>
-                                                    <select class="form-control" id="comparable_sales"
-                                                        name="comparable_sales">
-                                                        <option value="">Select Option</option>
-                                                        <option value="Yes - Printed + Emailed"
-                                                            <?php echo e(old('comparable_sales') == 'Yes - Printed + Emailed' ? 'selected' : ''); ?>>
-                                                            Yes - Printed + Emailed</option>
-                                                        <option value="Yes - Email Only"
-                                                            <?php echo e(old('comparable_sales') == 'Yes - Email Only' ? 'selected' : ''); ?>>
-                                                            Yes - Email Only</option>
-                                                        <option value="Yes - Printed Only"
-                                                            <?php echo e(old('comparable_sales') == 'Yes - Printed Only' ? 'selected' : ''); ?>>
-                                                            Yes - Printed Only</option>
-                                                        <option value="No - Not Required"
-                                                            <?php echo e(old('comparable_sales') == 'No - Not Required' ? 'selected' : ''); ?>>
-                                                            No - Not Required</option>
-                                                    </select>
-                                                </div>
-                                            </div>
+                                            
 
                                             <div class="col-md-12">
-                                                <div class="mb-3">
+                                                <div class="">
                                                     <label class="form-label" for="additional_notes">Additional
                                                         Notes</label>
                                                     <textarea class="form-control" id="additional_notes" name="additional_notes" rows="3"
@@ -750,6 +732,129 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-md-12 p-3">
+                                        <div class="card-header card-head1 pb-0">
+                                            <h4 class="ven-head1"><span>Comparable Sales (Optional)</span></h4>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+
+                                                <?php
+                                                    $reports = [
+                                                        'CMA Report',
+                                                        'Land Search',
+                                                        'Street Report',
+                                                        'Detailed Report 500 Metres',
+                                                        'Detailed Report 1km',
+                                                        'Detailed Report 2km',
+                                                        'Entire Suburb Search',
+                                                        'Brochure Report',
+                                                        'Other',
+                                                    ];
+                                                ?>
+
+                                                <!-- Toggle-style checkboxes -->
+                                                <div class="mb-3">
+                                                    <?php $__currentLoopData = $reports; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $report): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <div class="form-check form-switch">
+                                                            <input class="form-check-input report-toggle" type="checkbox"
+                                                                value="<?php echo e($report); ?>"
+                                                                id="report-<?php echo e(Str::slug($report)); ?>">
+                                                            <label class="form-check-label"
+                                                                for="report-<?php echo e(Str::slug($report)); ?>"><?php echo e($report); ?></label>
+                                                        </div>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </div>
+
+                                                <!-- VIP: Sales Date Range -->
+                                                <div class="mb-3" id="vip-date-range-container" style="display:none;">
+                                                    <label class="form-label">Sales Date Range</label>
+                                                    <select class="form-select" id="sales-date-range"
+                                                        name="comparable_date_range">
+                                                        <option value="">Select</option>
+                                                        <?php $__currentLoopData = ['Last week', 'Last Month', 'Last 3 Months', 'Last 6 Months', 'Last 9 Months', 'Last 12 Months', 'Last 18 Months', 'Last 2 Years', 'Last 3 Years', 'Last 5 Years']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $range): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <option value="<?php echo e($range); ?>"><?php echo e($range); ?>
+
+                                                            </option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Extra Notes -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Extra Notes / Info Required</label>
+                                                    <textarea class="form-control" name="comparable_notes" rows="3"></textarea>
+                                                </div>
+
+                                                <!-- Delivery Option -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Delivery Option</label>
+                                                    <select class="form-select" name="comparable_sales">
+                                                        <option value="N/A">N/A</option>
+                                                        <option value="Printed + Emailed">Printed + Emailed</option>
+                                                        <option value="Email Only">Email Only</option>
+                                                        <option value="Printed Only">Printed Only</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Who is Preparing -->
+                                                <div class="mb-3">
+                                                    <label class="form-label">Who is preparing?</label>
+                                                    <select class="form-select" id="preparing-by"
+                                                        name="who_is_preparing">
+                                                        <option value="">Select</option>
+                                                        <option value="My receptionist">My receptionist</option>
+                                                        <option value="My Assistant (PA)">My Assistant (PA)</option>
+                                                        <option value="Send to me">Send to me</option>
+                                                        <option value="Custom Email">Custom Email</option>
+                                                    </select>
+                                                </div>
+
+                                                <!-- Custom Email Input -->
+                                                <div class="mb-3" id="custom-email-container" style="display:none;">
+                                                    <label class="form-label">Enter Email</label>
+                                                    <input type="email" class="form-control" name="custom_email"
+                                                        placeholder="Enter email address">
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="card mb-3 p-4">
+                                            <div
+                                                class="card-header card-head1 pb-0 d-flex justify-content-between align-items-center">
+                                                <h4 class="ven-head1"><span>Other</span></h4>
+
+                                            </div>
+
+                                            <div id="otherCollapse">
+                                                <div class="card-body">
+
+                                                    <!-- Save This Appraisal Toggle -->
+                                                    <div class="mb-3 form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox"
+                                                            id="save_appraisal" name="save_appraisal">
+                                                        <label class="form-check-label" for="save_appraisal">Save This
+                                                            Appraisal in the CRM?</label>
+                                                    </div>
+
+                                                    <!-- Extra Notes -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Extra Notes</label>
+                                                        <textarea class="form-control" name="other_extra_notes" rows="3"
+                                                            placeholder="Enter any additional notes here"></textarea>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
 
                                     <div class="card-footer text-end">
                                         <button class="btn btn-primary" type="submit" id="submit-btn">
@@ -945,6 +1050,81 @@
     <script>
         $(document).ready(function() {
 
+            $('.report-toggle').on('change', function() {
+                if ($('.report-toggle:checked').length > 0) {
+                    $('#vip-date-range-container').slideDown();
+                } else {
+                    $('#vip-date-range-container').slideUp();
+                    $('#sales-date-range').val('');
+                }
+            });
+
+            // Show Custom Email input if selected
+            $('#preparing-by').on('change', function() {
+                if ($(this).val() === 'Custom Email') {
+                    $('#custom-email-container').slideDown();
+                } else {
+                    $('#custom-email-container').slideUp();
+                    $('#custom-email-container input').val('');
+                }
+            });
+            $(".option-btn").on("click", function() {
+                var field = $(this).data("field");
+                var value = $(this).data("value");
+
+                // Update hidden input
+                $("#" + field).val(value);
+
+                // Show/hide custom input only for 4+
+                var customInput = $("#" + field + "-custom");
+                if (value === "4+") {
+                    customInput.slideDown();
+                    customInput.find("input").val("").attr("min", 5).focus();
+                } else {
+                    customInput.slideUp();
+                    customInput.find("input").val("");
+                }
+
+                // Highlight selected button
+                $(this).siblings(".option-btn").removeClass("selected");
+                $(this).addClass("selected");
+            });
+
+            // Update hidden input when typing in custom input
+            $(".custom-input-container input").on("input", function() {
+                var fieldId = $(this).closest(".custom-input-container").attr("id");
+                var field = fieldId.replace("-custom", "");
+                $("#" + field).val($(this).val());
+            });
+
+            // Show custom input if old value exists
+            $(".custom-input-container").each(function() {
+                var field = $(this).attr("id").replace("-custom", "");
+                var currentValue = $("#" + field).val();
+
+                if (currentValue === "4+" || (currentValue && parseInt(currentValue) >= 5)) {
+                    $(this).slideDown();
+                    if (parseInt(currentValue) >= 5) {
+                        $(this).find("input").val(currentValue);
+                    }
+                }
+            });
+
+            function toggleHotQuestions() {
+                if ($("#category").val() === "Hot") {
+                    $("#hot-questions").slideDown();
+                } else {
+                    $("#hot-questions").slideUp();
+                    // Optional: clear values when hidden
+                    $("#hot-questions input").val("");
+                }
+            }
+
+            // Run on page load (useful if old value is Hot)
+            toggleHotQuestions();
+
+            // Run whenever category changes
+            $("#category").on("change", toggleHotQuestions);
             $("input[name='has_additional_vendor']").on("change", function() {
                 if ($(this).val() === "1") {
                     $("#vendor2Fields").slideDown();
@@ -987,13 +1167,13 @@
                 // Add active class to clicked button
                 $(this).addClass('active');
 
-                // Handle 6+ case
-                if (value === '6+') {
+                // Handle 4+ case
+                if (value === '4+') {
                     $(`#${field}-custom`).show();
 
                     // For under_cover_parking, set a temporary value to keep parking type visible
                     if (field === 'under_cover_parking') {
-                        $(`#${field}`).val('6'); // Set minimum value to keep parking type visible
+                        $(`#${field}`).val('6')
                     } else {
                         $(`#${field}`).val(''); // Clear hidden field until custom value is entered
                     }
@@ -1005,7 +1185,6 @@
                     $(`#${field}`).val(value);
                 }
 
-                // Special handling for under_cover_parking to show/hide parking type
                 if (field === 'under_cover_parking') {
                     toggleParkingType();
                 }
@@ -1046,7 +1225,7 @@
 
             function setInitialValue(field, value) {
                 if (parseInt(value) >= 6) {
-                    $(`.option-btn[data-field="${field}"][data-value="6+"]`).addClass('active');
+                    $(`.option-btn[data-field="${field}"][data-value="4+"]`).addClass('active');
                     $(`#${field}-custom`).show();
                     $(`#${field}-custom input`).val(value);
                 } else {
@@ -1240,7 +1419,7 @@
 
             function toggleUpdatedField() {
                 let condition = $("#condition").val();
-                if (condition === "Updated Recently" || condition === "Updated a While Ago") {
+                if (condition && condition != "Fully Renovated") {
                     $("#what_was_updated").closest(".col-md-12").show();
                 } else {
                     $("#what_was_updated").closest(".col-md-12").hide();
@@ -1263,13 +1442,31 @@
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').remove();
 
+                // Disable button while processing
                 submitBtn.prop('disabled', true).html(
-                    '<i class="fas fa-spinner fa-spin mr-1"></i> Processing...');
+                    '<i class="fas fa-spinner fa-spin mr-1"></i> Processing...'
+                );
+
+                // Collect selected toggles
+                var selectedReports = [];
+                $('.report-toggle:checked').each(function() {
+                    selectedReports.push($(this).val());
+                });
+
+                // Prepare formData
+                var formData = form.serializeArray(); // get all form data
+                formData = formData.filter(item => item.name !==
+                    'comparable_types'); // remove previous if any
+                formData.push({
+                    name: 'comparable_types',
+                    value: JSON.stringify(selectedReports)
+                });
+
 
                 $.ajax({
                     url: form.attr('action'),
                     type: 'POST',
-                    data: form.serialize(),
+                    data: formData,
                     success: function(response) {
                         if (response.success) {
                             Swal.fire({

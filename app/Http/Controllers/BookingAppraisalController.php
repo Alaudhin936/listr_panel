@@ -18,128 +18,127 @@ use Illuminate\Support\Facades\Http;
 class BookingAppraisalController extends Controller
 {
     public function createConductAppraisal(BookingAppraisal $bookingAppraisal)
-{
-    $bookingData = $bookingAppraisal->toArray();
-    $tradePersons = Tradeperson::where('agent_id', auth()->guard('agent')->user()->id)
-        ->active()
-        ->get();
-        
-    $emailTemplates = TempForConduct::where('agent_id', auth()->guard('agent')->user()->id)
-        ->active()
-        ->byType('email')
-        ->get();
-        
-    $smsTemplates = TempForConduct::where('agent_id', auth()->guard('agent')->user()->id)
-        ->active()
-        ->byType('sms')
-        ->get();
+    {
+        $bookingData = $bookingAppraisal->toArray();
+        $tradePersons = Tradeperson::where('agent_id', auth()->guard('agent')->user()->id)
+            ->active()
+            ->get();
 
-    return view('agents.conduct-appraisal.create', compact('bookingData', 'bookingAppraisal','tradePersons', 'emailTemplates', 'smsTemplates'));
-}
+        $emailTemplates = TempForConduct::where('agent_id', auth()->guard('agent')->user()->id)
+            ->active()
+            ->byType('email')
+            ->get();
+
+        $smsTemplates = TempForConduct::where('agent_id', auth()->guard('agent')->user()->id)
+            ->active()
+            ->byType('sms')
+            ->get();
+
+        return view('agents.conduct-appraisal.create', compact('bookingData', 'bookingAppraisal', 'tradePersons', 'emailTemplates', 'smsTemplates'));
+    }
     public function index(Request $request)
     {
         $query = BookingAppraisal::with('agent')
             ->select('*')
             ->where('agent_id', Auth::guard('agent')->user()->id)
             ->latest();
-            
+
         if (request()->has('start_date') && request()->start_date != '') {
             $query->whereDate('created_at', '>=', request()->start_date);
         }
-        
+
         if (request()->has('end_date') && request()->end_date != '') {
             $query->whereDate('created_at', '<=', request()->end_date);
         }
-        
+
         $appraisals = $query->get();
-            
+
         if ($request->ajax()) {
             return datatables()->of($appraisals)
-                ->addColumn('vendor_name', function($appraisal) {
+                ->addColumn('vendor_name', function ($appraisal) {
                     return $appraisal->vendor1_first_name . ' ' . $appraisal->vendor1_last_name;
                 })
-                ->addColumn('contact_info', function($appraisal) {
+                ->addColumn('contact_info', function ($appraisal) {
                     return $appraisal->vendor1_mobile . '<br>' . $appraisal->vendor1_email;
                 })
-            ->addColumn('appointment', function($appraisal) {
-    if ($appraisal->appointment_date) {
-        return $appraisal->appointment_date . ' ' . $appraisal->appointment_time;
-    }
-    return null;
-})
+                ->addColumn('appointment', function ($appraisal) {
+                    if ($appraisal->appointment_date) {
+                        return $appraisal->appointment_date . ' ' . $appraisal->appointment_time;
+                    }
+                    return null;
+                })
 
-                ->addColumn('status', function($appraisal) {
+                ->addColumn('status', function ($appraisal) {
                     return '<span class="badge bg-success">Scheduled</span>';
                 })
                 ->addColumn('edit_url', function ($appraisal) {
-    return route('agent.booking-appraisals.edit', $appraisal->id);
-})
+                    return route('agent.booking-appraisals.edit', $appraisal->id);
+                })
 
-              ->addColumn('actions', function ($appraisal) {
-    $isConverted = $appraisal->converted_to_conduct_appraisal == 1;
+                ->addColumn('actions', function ($appraisal) {
+                    $isConverted = $appraisal->converted_to_conduct_appraisal == 1;
 
-    $viewBtn = '<button class="action-btn btn-outline-secondary btn-view view-btn" 
-                    data-id="' . $appraisal->id . '" 
+                    $viewBtn = '<button class="action-btn btn-outline-secondary btn-view view-btn"
+                    data-id="' . $appraisal->id . '"
                     style="color:black;border:1px solid black;">
                     <i class="fas fa-eye me-1"></i>
                 </button>';
 
-    // Edit button
-    $editBtn = '<a href="'.($isConverted ? '#' :  route('agent.booking-appraisals.edit', $appraisal->id)).'" 
-                   class="action-btn btn btn-outline-primary '.($isConverted ? 'disabled' : '').'" 
-                   style="color:black;border:1px solid black;" 
+                    // Edit button
+                    $editBtn = '<a href="' . ($isConverted ? '#' :  route('agent.booking-appraisals.edit', $appraisal->id)) . '"
+                   class="action-btn btn btn-outline-primary ' . ($isConverted ? 'disabled' : '') . '"
+                   style="color:black;border:1px solid black;"
                    title="Edit">
                    <i class="fas fa-edit"></i>
                </a>';
 
-    // Delete button
-    $deleteBtn = '<button class="action-btn btn-outline-danger btn-delete delete-btn '.($isConverted ? 'disabled' : '').'" 
-                      data-id="' . $appraisal->id . '" 
-                      style="color:black;border:1px solid black;" 
-                      '.($isConverted ? 'disabled' : '').'>
+                    // Delete button
+                    $deleteBtn = '<button class="action-btn btn-outline-danger btn-delete delete-btn ' . ($isConverted ? 'disabled' : '') . '"
+                      data-id="' . $appraisal->id . '"
+                      style="color:black;border:1px solid black;"
+                      ' . ($isConverted ? 'disabled' : '') . '>
                       <i class="fas fa-trash me-1"></i>
                   </button>';
 
-  $conductBtn = '<a href="'.($isConverted ? '#' : route('agent.booking-appraisals.conduct-appraisal.create', $appraisal->id)).'" 
-                   class="action-btn conduct-btn '.($isConverted ? 'disabled' : '').'" 
+                    $conductBtn = '<a href="' . ($isConverted ? '#' : route('agent.booking-appraisals.conduct-appraisal.create', $appraisal->id)) . '"
+                   class="action-btn conduct-btn ' . ($isConverted ? 'disabled' : '') . '"
                    title="Conduct Appraisal"
                    style="color:black; background:none; border:none; border:1px solid black;">
                    <i class="fas fa-arrow-right"></i>
               </a>';
 
 
-    return '
+                    return '
         <div class="action-buttons">
-            '.$viewBtn.'
-            '.$editBtn.'
-            '.$deleteBtn.'
-            '.$conductBtn.'
+            ' . $viewBtn . '
+            ' . $editBtn . '
+            ' . $deleteBtn . '
+            ' . $conductBtn . '
         </div>
     ';
-})
+                })
 
                 ->rawColumns(['contact_info', 'status', 'actions'])
                 ->make(true);
         }
-        
+
         return view('agents.booking-appraisal.index');
     }
 
     public function create()
     {
-         // Get SMS and Email templates
-    $smsTemplates = Template::where('type', 'sms')
-        ->where('is_active', true)
-        ->get();
-    
-    $emailTemplates = Template::where('type', 'email')
-        ->where('is_active', true)
-        ->get();
+        $smsTemplates = Template::where('type', 'sms')
+            ->where('is_active', true)
+            ->get();
+
+        $emailTemplates = Template::where('type', 'email')
+            ->where('is_active', true)
+            ->get();
         $agents = Agent::where('agency_id', Auth::guard('agent')->user()->agency_id)->get();
-        return view('agents.booking-appraisal.create', compact('agents','smsTemplates', 'emailTemplates'));
+        return view('agents.booking-appraisal.create', compact('agents', 'smsTemplates', 'emailTemplates'));
     }
 
- public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
             'address' => 'nullable|string',
@@ -147,7 +146,7 @@ class BookingAppraisalController extends Controller
             'bedrooms' => 'nullable|integer',
             'bathrooms' => 'nullable|integer',
             'living_areas' => 'nullable|integer',
-            'study' => 'nullable|integer',
+            'study' => 'nullable',
             'under_cover_parking' => 'nullable|integer',
             'condition' => 'nullable|string',
             'what_was_updated' => 'nullable|string',
@@ -201,22 +200,32 @@ class BookingAppraisalController extends Controller
                 'vendor1_first_name' => $request->vendor1_first_name,
                 'vendor1_last_name' => $request->vendor1_last_name,
                 'vendor1_mobile' => $request->vendor1_mobile,
+                'property_listed_when' => $request->property_listed_when,
+                'vendor_moving_to' => $request->vendor_moving_to,
                 'vendor1_email' => $request->vendor1_email,
                 'vendor2_first_name' => $request->vendor2_first_name,
                 'vendor2_last_name' => $request->vendor2_last_name,
                 'vendor2_mobile' => $request->vendor2_mobile,
                 'vendor2_email' => $request->vendor2_email,
+                'someone_email' => $request->someone_email,
+                'someone_first_name' => $request->someone_first_name,
+                'someone_last_name' => $request->someone_last_name,
+                'someone_mobile' => $request->someone_mobile,
                 'appointment_date' => $request->appointment_date,
                 'appointment_time' => $request->appointment_time,
                 'lead_source' => $request->lead_source,
                 'lead_source_notes' => $request->lead_source_notes,
                 'category' => $request->category,
+                'who_is_preparing' => $request->who_is_preparing,
+                'comparable_notes' =>  $request->comparable_notes,
+                'comparable_date_range' =>  $request->comparable_date_range,
+                'comparable_types' => $request->comparable_types,
                 'is_vendor_selling' => $request->is_vendor_selling,
                 'moving_to' => $request->moving_to,
                 'when_listing' => $request->when_listing,
                 'send_confirmation_sms' => $request->send_confirmation_sms,
                 'send_confirmation_email' => $request->send_confirmation_email,
-                'message_preview' => $request->message_preview,
+                'message_preview' => $request->sms_preview,
                 'save_to_crm' => $request->save_to_crm,
                 'comparable_sales' => $request->comparable_sales,
                 'additional_notes' => $request->additional_notes,
@@ -236,13 +245,12 @@ class BookingAppraisalController extends Controller
             if ($request->followup_sms_template && $request->vendor1_mobile && $request->sms_preview) {
                 try {
                     $smsSuccess = $this->sendAppraisalSMS($request->vendor1_mobile, $request->sms_preview);
-                    
+
                     Log::info('Booking Appraisal SMS Sent', [
                         'appraisal_id' => $appraisal->id,
                         'vendor_mobile' => $request->vendor1_mobile,
                         'success' => $smsSuccess
                     ]);
-                    
                 } catch (\Exception $e) {
                     Log::error('Booking Appraisal SMS Failed', [
                         'appraisal_id' => $appraisal->id,
@@ -266,13 +274,12 @@ class BookingAppraisalController extends Controller
                         $emailContent,
                         $request->vendor1_first_name . ' ' . $request->vendor1_last_name
                     );
-                    
+
                     Log::info('Booking Appraisal Email Sent', [
                         'appraisal_id' => $appraisal->id,
                         'vendor_email' => $request->vendor1_email,
                         'success' => $emailSuccess
                     ]);
-                    
                 } catch (\Exception $e) {
                     Log::error('Booking Appraisal Email Failed', [
                         'appraisal_id' => $appraisal->id,
@@ -284,15 +291,15 @@ class BookingAppraisalController extends Controller
 
             $message = 'Booking Appraisal created successfully!';
             $messagingStatus = [];
-            
+
             if ($request->followup_sms_template && $request->vendor1_mobile) {
                 $messagingStatus[] = $smsSuccess ? 'SMS sent successfully' : 'SMS sending failed';
             }
-            
+
             if ($request->followup_email_template && $request->vendor1_email) {
                 $messagingStatus[] = $emailSuccess ? 'Email sent successfully' : 'Email sending failed';
             }
-            
+
             if (!empty($messagingStatus)) {
                 $message .= ' ' . implode('. ', $messagingStatus) . '.';
             }
@@ -304,7 +311,6 @@ class BookingAppraisalController extends Controller
                 'sms_sent' => $smsSuccess,
                 'email_sent' => $emailSuccess
             ]);
-
         } catch (\Exception $e) {
             Log::error('Booking Appraisal Creation Failed', [
                 'error' => $e->getMessage(),
@@ -328,7 +334,7 @@ class BookingAppraisalController extends Controller
             $username = config('services.clicksend.username');
             $apiKey = config('services.clicksend.api_key');
             $senderId = env('CLICKSEND_FROM', 'LISTR');
-            
+
             $formattedPhone = $this->formatPhoneNumber($phone);
 
             Log::info('Sending Booking Appraisal SMS', [
@@ -361,9 +367,11 @@ class BookingAppraisalController extends Controller
             $data = $response->json();
             Log::info('ClickSend SMS Response', $data);
 
-            if (isset($data['data']['messages'][0]['status']) && 
-                $data['data']['messages'][0]['status'] === 'INVALID_SENDER_ID') {
-                
+            if (
+                isset($data['data']['messages'][0]['status']) &&
+                $data['data']['messages'][0]['status'] === 'INVALID_SENDER_ID'
+            ) {
+
                 Log::warning('Invalid Sender ID detected, retrying with blank sender');
 
                 $response = Http::withBasicAuth($username, $apiKey)
@@ -384,7 +392,6 @@ class BookingAppraisalController extends Controller
             }
 
             return true;
-
         } catch (\Exception $e) {
             Log::error('Booking Appraisal SMS Exception: ' . $e->getMessage());
             return false;
@@ -439,7 +446,6 @@ class BookingAppraisalController extends Controller
             }
 
             return true;
-
         } catch (\Exception $e) {
             Log::error('Booking Appraisal Email Exception: ' . $e->getMessage());
             return false;
@@ -453,7 +459,7 @@ class BookingAppraisalController extends Controller
     {
         $greeting = $vendorName ? "Hello {$vendorName}," : "Hello,";
         $formattedContent = nl2br($content);
-        
+
         return "
         <!DOCTYPE html>
         <html lang='en'>
@@ -498,7 +504,7 @@ class BookingAppraisalController extends Controller
     private function formatPhoneNumber($phone)
     {
         $phone = preg_replace('/[^0-9+]/', '', $phone);
-        
+
         if (!str_starts_with($phone, '+')) {
             if (str_starts_with($phone, '61')) {
                 $phone = '+' . $phone;
@@ -508,7 +514,7 @@ class BookingAppraisalController extends Controller
                 $phone = '+61' . $phone;
             }
         }
-        
+
         return $phone;
     }
 
@@ -518,10 +524,10 @@ class BookingAppraisalController extends Controller
         if ($request->ajax()) {
             return response()->json([
                 'success' => true,
-                'data' => $bookingAppraisal->load('agent') 
+                'data' => $bookingAppraisal->load('agent')
             ]);
         }
-        
+
         return view('agents.booking-appraisal.show', compact('bookingAppraisal'));
     }
 
@@ -609,7 +615,7 @@ class BookingAppraisalController extends Controller
             'additional_notes' => $request->additional_notes,
         ]);
 
-         return response()->json([
+        return response()->json([
             'success' => true,
             'message' => 'Hot lead created successfully!',
             'redirect' => route('agent.booking-appraisals.index')

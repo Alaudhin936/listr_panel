@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class BookingAppraisal extends Model
 {
     use HasFactory;
-protected $table="booking_appraisals";
+    protected $table = "booking_appraisals";
     protected $fillable = [
         'hot_lead_id',
         'agency_id',
@@ -35,13 +35,23 @@ protected $table="booking_appraisals";
         'appointment_time',
         'lead_source',
         'lead_source_notes',
+        'vendor_moving_to',
+        'property_listed_when',
         'category',
         'is_vendor_selling',
         'moving_to',
+        'comparable_types',
+        'comparable_notes',
+        'who_is_preparing',
+        'comparable_date_range',
         'when_listing',
         'send_confirmation_sms',
         'send_confirmation_email',
         'message_preview',
+        'someone_email',
+        'someone_mobile',
+        'someone_first_name',
+        'someone_last_name',
         'save_to_crm',
         'comparable_sales',
         'added_to_calendar',
