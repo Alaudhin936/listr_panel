@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\JustListedForm;
 use App\Models\ConductAppraisal;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class JustListedController extends Controller
 {
@@ -41,10 +42,10 @@ class JustListedController extends Controller
                 })
                 ->addColumn('actions', function ($listing) {
                     return '<div class="action-buttons">
-                                <a href="'.route('agent.just-listed.edit', $listing->id).'" class="action-btn btn-edit">
+                                <a href="' . route('agent.just-listed.edit', $listing->id) . '" class="action-btn btn-edit">
                                     <i class="fas fa-edit me-1"></i> Edit
                                 </a>
-                                <a href="'.route('agent.just-listed.destroy', $listing->id).'" class="action-btn btn-delete">
+                                <a href="' . route('agent.just-listed.destroy', $listing->id) . '" class="action-btn btn-delete">
                                     <i class="fas fa-trash me-1"></i> Delete
                                 </a>
                             </div>';
@@ -58,7 +59,13 @@ class JustListedController extends Controller
 
     public function create()
     {
-        return view('agents.just-listed.create');
+
+      $allAppraisals = ConductAppraisal::where('agent_id', Auth::guard('agent')->user()->id)
+    ->orderBy('created_at', 'desc') // Most recent first
+    ->get();
+
+        // dd($allAppraisals);
+        return view('agents.just-listed.create', compact('allAppraisals'));
     }
 
     public function store(Request $request)
@@ -69,20 +76,20 @@ class JustListedController extends Controller
             'vendor1_last_name' => 'required|string|max:255',
             'vendor1_mobile' => 'required|string|max:20',
             'vendor1_email' => 'required|email|max:255',
-            
+
             // Vendor 2 validation (conditional)
             'vendor2_first_name' => 'nullable|required_if:has_additional_vendor,1|string|max:255',
             'vendor2_last_name' => 'nullable|required_if:has_additional_vendor,1|string|max:255',
             'vendor2_mobile' => 'nullable|required_if:has_additional_vendor,1|string|max:20',
             'vendor2_email' => 'nullable|required_if:has_additional_vendor,1|email|max:255',
-            
+
             // Main contact validation
             'main_contact' => 'required|string',
             'main_contact_first_name' => 'nullable|required_if:main_contact,Someone else|string|max:255',
             'main_contact_last_name' => 'nullable|required_if:main_contact,Someone else|string|max:255',
             'main_contact_mobile' => 'nullable|required_if:main_contact,Someone else|string|max:20',
             'main_contact_email' => 'nullable|required_if:main_contact,Someone else|email|max:255',
-            
+
             // Campaign details
             'method_of_sale' => 'nullable',
             'auction_date' => 'nullable|required_if:method_of_sale,Auction|date',
@@ -94,7 +101,7 @@ class JustListedController extends Controller
             'campaign_overview_notes' => 'nullable|string',
             'campaign_recipient' => 'nullable|string',
             'custom_email' => 'nullable|email',
-            
+
             // Agents
             'first_agent' => 'string',
             'first_agent_other' => 'nullable|required_if:first_agent,Other|string',
@@ -102,30 +109,30 @@ class JustListedController extends Controller
             'second_agent_other' => 'nullable|required_if:second_agent,Other|string',
             'third_agent' => 'nullable|string',
             'third_agent_other' => 'nullable|required_if:third_agent,Other|string',
-            
+
             // Privacy
             'privacy_consent' => 'required|boolean',
             'privacy_consent_trades' => 'nullable|boolean',
-            
+
             // Marketing package
             'marketing_package' => 'nullable|string',
-            
+
             // Photography services
             'photography_services' => 'nullable|array',
             'other_photography_requirements' => 'nullable|string',
             'photography_supplier' => 'nullable|string',
-            
+
             // Copywriting
             'copywriting_services' => 'nullable|array',
             'copywriting_supplier' => 'nullable|string',
-            
+
             // Floorplan
             'floorplan_services' => 'nullable|array',
             'floorplan_supplier' => 'nullable|string',
-            
+
             // Supplier preferences
             'supplier_preferences' => 'nullable|string',
-            
+
             // Property access for suppliers
             'supplier_access_method' => 'nullable|string',
             'vacant_access_type' => 'nullable|string',
@@ -133,10 +140,10 @@ class JustListedController extends Controller
             'keysafe_location' => 'nullable|string',
             'other_keysafe_location' => 'nullable|string',
             'supplier_message' => 'nullable|string',
-            
+
             // Other marketing
             'other_marketing_details' => 'nullable|string',
-            
+
             // Other suppliers
             'supplier_name' => 'nullable|string',
             'supplier_category' => 'nullable|string',
@@ -144,7 +151,7 @@ class JustListedController extends Controller
             'supplier_mobile' => 'nullable|string',
             'supplier_email' => 'nullable|email',
             'supplier_contact_method' => 'nullable|string',
-            
+
             // Appointment dates
             'all_appointments_date' => 'nullable|date',
             'floorplan_copywriting_date' => 'nullable|date',
@@ -153,7 +160,7 @@ class JustListedController extends Controller
             'custom_booking_instructions' => 'nullable|string',
             'booking_handler' => 'nullable|string',
             'save_as_default' => 'nullable|boolean',
-            
+
             // Property access
             'occupancy_status' => 'nullable',
             'renters_name' => 'nullable',
@@ -166,7 +173,7 @@ class JustListedController extends Controller
             'alarm_system' => 'nullable|string',
             'alarm_instructions' => 'nullable|string',
             'additional_notes' => 'nullable|string',
-            
+
             // Trades
             'trades_contacts' => 'nullable|array',
             'other_trades_contact' => 'nullable|string',
@@ -178,7 +185,7 @@ class JustListedController extends Controller
             'vacant_access_code' => 'nullable|string',
             'painting_notes' => 'nullable|string',
             'gardening_notes' => 'nullable|string',
-            
+
             'conduct_appraisal_id' => 'nullable|exists:conduct_appraisals,id',
         ]);
 
@@ -191,7 +198,7 @@ class JustListedController extends Controller
             'trades_contacts',
             'trades_require_access'
         ];
-        
+
         foreach ($arrayFields as $field) {
             if (isset($validated[$field])) {
                 $validated[$field] = json_encode($validated[$field]);
@@ -221,39 +228,39 @@ class JustListedController extends Controller
                 'data' => $form
             ]);
         }
-        
+
         return redirect()->back()->with('success', 'Just Listed form submitted successfully!');
     }
 
     public function show($id)
-{
-    $form = JustListed::where('id', $id)
-        ->where('agent_id', Auth::guard('agent')->user()->id)
-        ->firstOrFail();
+    {
+        $form = JustListed::where('id', $id)
+            ->where('agent_id', Auth::guard('agent')->user()->id)
+            ->firstOrFail();
 
-    // Format the date fields directly
-    $form->auction_date = $form->auction_date 
-        ? Carbon::parse($form->auction_date)->format('d M Y') 
-        : null;
+        // Format the date fields directly
+        $form->auction_date = $form->auction_date
+            ? Carbon::parse($form->auction_date)->format('d M Y')
+            : null;
 
-    $form->first_open_date = $form->first_open_date 
-        ? Carbon::parse($form->first_open_date)->format('d M Y') 
-        : null;
+        $form->first_open_date = $form->first_open_date
+            ? Carbon::parse($form->first_open_date)->format('d M Y')
+            : null;
 
-    $form->expressions_closing_date = $form->expressions_closing_date 
-        ? Carbon::parse($form->expressions_closing_date)->format('d M Y') 
-        : null;
+        $form->expressions_closing_date = $form->expressions_closing_date
+            ? Carbon::parse($form->expressions_closing_date)->format('d M Y')
+            : null;
 
-    return response()->json([
-        'success' => true,
-        'data' => $form
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'data' => $form
+        ]);
+    }
 
     public function destroy($id)
     {
         $appraisal = JustListed::findOrFail($id);
-        
+
         if (Auth::guard('agent')->user()->id !== $appraisal->agent_id) {
             abort(403, 'Unauthorized action.');
         }

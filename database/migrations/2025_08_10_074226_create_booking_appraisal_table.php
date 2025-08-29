@@ -40,6 +40,8 @@ return new class extends Migration {
 
             $table->string('someone_first_name')->nullable();
             $table->string('someone_last_name')->nullable();
+            $table->string('someone_mobile')->nullable();
+            $table->string('someone_email')->nullable();
 
 
 

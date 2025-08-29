@@ -42,6 +42,9 @@
         <li class="{{ request()->routeIs('agent.tempforconduct.*') ? 'active' : '' }}">
             <a href="{{ route('agent.tempforconduct.index') }}">Temp for Conduct</a>
         </li>
+         <li class="{{ request()->routeIs('agent.package.*') ? 'active' : '' }}">
+            <a href="{{ route('agent.package.index') }}">Packages</a>
+        </li>
     </ul>
 </li>
 

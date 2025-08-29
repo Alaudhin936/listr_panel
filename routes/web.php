@@ -28,6 +28,7 @@ use App\Http\Controllers\ConductAppraisalController;
 use App\Http\Controllers\AgencySubscriptionController;
 use App\Http\Controllers\AgencyBookingAppraisalController;
 use App\Http\Controllers\AgencyConductAppraisalController;
+use App\Http\Controllers\PackageCatagoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,7 @@ use App\Http\Controllers\AgencyConductAppraisalController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::get('/clear-config', function () {
     Artisan::call('config:clear');
     return 'Configuration cache cleared!';
@@ -78,71 +80,75 @@ Route::middleware('agent.guest')->group(function () {
     Route::get('/agent/register', [AgentSignupController::class, 'showAgentRegistration'])->name('agent.register');
     Route::post('/agent/register/store', [AgentSignupController::class, 'registerAgent'])->name('agent.signup.store');
     Route::post('/agent/send-otp', [AgentSignupController::class, 'sendOTP'])->name('agent.send.otp');
-Route::post('/agent/resend-otp', [AgentSignupController::class, 'resendOTP'])->name('agent.resend.otp');
-Route::post('/agent/verify-otp', [AgentSignupController::class, 'verifyOTP'])->name('agent.verify.otp');
-  Route::post('/agent/login/send-otp', [AgentLoginController::class, 'sendLoginOTP'])->name('agent.login.send.otp');
-Route::post('/agent/login/resend-otp', [AgentLoginController::class, 'resendLoginOTP'])->name('agent.login.resend.otp');
-Route::post('/agent/login/verify-otp', [AgentLoginController::class, 'verifyLoginOTP'])->name('agent.login.verify.otp');
+    Route::post('/agent/resend-otp', [AgentSignupController::class, 'resendOTP'])->name('agent.resend.otp');
+    Route::post('/agent/verify-otp', [AgentSignupController::class, 'verifyOTP'])->name('agent.verify.otp');
+    Route::post('/agent/login/send-otp', [AgentLoginController::class, 'sendLoginOTP'])->name('agent.login.send.otp');
+    Route::post('/agent/login/resend-otp', [AgentLoginController::class, 'resendLoginOTP'])->name('agent.login.resend.otp');
+    Route::post('/agent/login/verify-otp', [AgentLoginController::class, 'verifyLoginOTP'])->name('agent.login.verify.otp');
 });
 
 Route::middleware('agent.auth')->group(function () {
     Route::get('/agent/dashboard', [AgentDashboardController::class, 'index'])->name('agent.dashboard');
     Route::post('/agent-logout', [AgentLoginController::class, 'logout'])->name('agent.logout');
-  
+
     Route::prefix('agent')->name('agent.')->middleware(['auth:agent'])->group(function () {
-    Route::get('/hotleads', [AgentHotLeadsController::class, 'index'])->name('hotleads.index');
-    Route::get('/hotleads/create', [AgentHotLeadsController::class, 'create'])->name('hotleads.create');
-    Route::post('/hotleads', [AgentHotLeadsController::class, 'store'])->name('hotleads.store');
-    Route::get('/hotleads/{hotLead}', [AgentHotLeadsController::class, 'show'])->name('hotleads.show');
-    Route::get('/hotleads/{hotLead}/edit', [AgentHotLeadsController::class, 'edit'])->name('hotleads.edit');
-    Route::put('/hotleads/{hotLead}', [AgentHotLeadsController::class, 'update'])->name('hotleads.update');
-    Route::delete('/hotleads/{hotLead}', [AgentHotLeadsController::class, 'destroy'])->name('hotleads.destroy');
-    Route::post('/hotleads/{hotLead}/status', [AgentHotLeadsController::class, 'changeStatus'])->name('hotleads.status');
-Route::post('/hot-leads/autosave', [AgentHotLeadsController::class, 'autosave'])->name('hotleads.autosave');
+        Route::get('/hotleads', [AgentHotLeadsController::class, 'index'])->name('hotleads.index');
+        Route::get('/hotleads/create', [AgentHotLeadsController::class, 'create'])->name('hotleads.create');
+        Route::post('/hotleads', [AgentHotLeadsController::class, 'store'])->name('hotleads.store');
+        Route::get('/hotleads/{hotLead}', [AgentHotLeadsController::class, 'show'])->name('hotleads.show');
+        Route::get('/hotleads/{hotLead}/edit', [AgentHotLeadsController::class, 'edit'])->name('hotleads.edit');
+        Route::put('/hotleads/{hotLead}', [AgentHotLeadsController::class, 'update'])->name('hotleads.update');
+        Route::delete('/hotleads/{hotLead}', [AgentHotLeadsController::class, 'destroy'])->name('hotleads.destroy');
+        Route::post('/hotleads/{hotLead}/status', [AgentHotLeadsController::class, 'changeStatus'])->name('hotleads.status');
+        Route::post('/hot-leads/autosave', [AgentHotLeadsController::class, 'autosave'])->name('hotleads.autosave');
 
 
-     Route::get('/conduct-appraisals', [ConductAppraisalController::class, 'index'])->name('appraisals.index');
-    Route::get('/conduct-appraisals/create', [ConductAppraisalController::class, 'create'])->name('appraisals.create');
-    Route::post('/conduct-appraisals/store', [ConductAppraisalController::class, 'store'])->name('appraisals.store');
-    Route::get('/conduct-appraisals/{appraisal}', [ConductAppraisalController::class, 'show'])->name('appraisals.show');
-    Route::get('/conduct-appraisals/{appraisal}/edit', [ConductAppraisalController::class, 'edit'])->name('appraisals.edit');
-    Route::put('/conduct-appraisals/{appraisal}', [ConductAppraisalController::class, 'update'])->name('appraisals.update');
-    Route::delete('/conduct-appraisals/{appraisal}', [ConductAppraisalController::class, 'destroy'])->name('appraisals.destroy');
-    Route::get('/hotleads/{hotlead}/booking-appraisal', [HotLeadController::class, 'createBookingAppraisal'])
-    ->name('hotleads.booking-appraisal.create');
-    Route::get('/booking-appraisals/{bookingAppraisal}/conduct-appraisal', [BookingAppraisalController::class, 'createConductAppraisal'])
-    ->name('booking-appraisals.conduct-appraisal.create');
-    Route::get('/appraisals/{appraisal}/just-listed', [ConductAppraisalController::class, 'createJustListed'])
-    ->name('conduct-appraisals.just-listed.create');
-    // Trade Person routes
-     Route::prefix('trade-persons')->name('trade-persons.')->group(function () {
-        Route::get('/', [TradePersonController::class, 'index'])->name('index');
-        Route::post('/', [TradePersonController::class, 'store'])->name('store');
-        Route::put('/{tradePerson}', [TradePersonController::class, 'update'])->name('update');
-        Route::delete('/{tradePerson}', [TradePersonController::class, 'destroy'])->name('destroy');
-        Route::patch('/{tradePerson}/toggle-status', [TradePersonController::class, 'toggleStatus'])->name('toggle-status');
+        Route::get('/conduct-appraisals', [ConductAppraisalController::class, 'index'])->name('appraisals.index');
+        Route::get('/conduct-appraisals/create', [ConductAppraisalController::class, 'create'])->name('appraisals.create');
+        Route::post('/conduct-appraisals/store', [ConductAppraisalController::class, 'store'])->name('appraisals.store');
+        Route::get('/conduct-appraisals/{appraisal}', [ConductAppraisalController::class, 'show'])->name('appraisals.show');
+        Route::get('/conduct-appraisals/{appraisal}/edit', [ConductAppraisalController::class, 'edit'])->name('appraisals.edit');
+        Route::put('/conduct-appraisals/{appraisal}', [ConductAppraisalController::class, 'update'])->name('appraisals.update');
+        Route::delete('/conduct-appraisals/{appraisal}', [ConductAppraisalController::class, 'destroy'])->name('appraisals.destroy');
+        Route::get('/hotleads/{hotlead}/booking-appraisal', [HotLeadController::class, 'createBookingAppraisal'])
+            ->name('hotleads.booking-appraisal.create');
+        Route::get('/booking-appraisals/{bookingAppraisal}/conduct-appraisal', [BookingAppraisalController::class, 'createConductAppraisal'])
+            ->name('booking-appraisals.conduct-appraisal.create');
+        Route::get('/appraisals/{appraisal}/just-listed', [ConductAppraisalController::class, 'createJustListed'])
+            ->name('conduct-appraisals.just-listed.create');
+        // Trade Person routes
+        Route::prefix('trade-persons')->name('trade-persons.')->group(function () {
+            Route::get('/', [TradePersonController::class, 'index'])->name('index');
+            Route::post('/', [TradePersonController::class, 'store'])->name('store');
+            Route::put('/{tradePerson}', [TradePersonController::class, 'update'])->name('update');
+            Route::delete('/{tradePerson}', [TradePersonController::class, 'destroy'])->name('destroy');
+            Route::patch('/{tradePerson}/toggle-status', [TradePersonController::class, 'toggleStatus'])->name('toggle-status');
+        });
+        Route::prefix('tempforconduct')->name('tempforconduct.')->group(function () {
+            Route::get('/', [TempForConductController::class, 'index'])->name('index');
+            Route::post('/', [TempForConductController::class, 'store'])->name('store');
+            Route::put('/{tempForConduct}', [TempForConductController::class, 'update'])->name('update');
+            Route::delete('/{tempForConduct}', [TempForConductController::class, 'destroy'])->name('destroy');
+            Route::patch('/{tempForConduct}/toggle-status', [TempForConductController::class, 'toggleStatus'])->name('toggle-status');
+        });
+
+        Route::prefix('package')->name('package.')->group(function() {
+            Route::get('/', [PackageCatagoryController::class, 'index'])->name('index');
+            Route::post('/package/store', [PackageCatagoryController::class, 'store'])->name('store');
+            Route::post('/package/service/store', [PackageCatagoryController::class, 'serviceStore'])->name('service.store');
+            Route::post('/package/destroy/{package}', [PackageCatagoryController::class, 'destroy'])->name('destroy');
+        });
     });
-    Route::prefix('tempforconduct')->name('tempforconduct.')->group(function () {
-    Route::get('/', [TempForConductController::class, 'index'])->name('index');
-    Route::post('/', [TempForConductController::class, 'store'])->name('store');
-    Route::put('/{tempForConduct}', [TempForConductController::class, 'update'])->name('update');
-    Route::delete('/{tempForConduct}', [TempForConductController::class, 'destroy'])->name('destroy');
-    Route::patch('/{tempForConduct}/toggle-status', [TempForConductController::class, 'toggleStatus'])->name('toggle-status');
 });
-
-});
-
-
-});
-Route::prefix('agent')->name('agent.')->middleware(['agent.auth'])->group(function() {
-       Route::prefix('templates')->name('templates.')->group(function () {
+Route::prefix('agent')->name('agent.')->middleware(['agent.auth'])->group(function () {
+    Route::prefix('templates')->name('templates.')->group(function () {
         Route::get('/', [TemplateController::class, 'index'])->name('index');
         Route::post('/', [TemplateController::class, 'store'])->name('store');
         Route::put('/{template}', [TemplateController::class, 'update'])->name('update');
         Route::delete('/{template}', [TemplateController::class, 'destroy'])->name('destroy');
         Route::patch('/{template}/toggle-status', [TemplateController::class, 'toggleStatus'])->name('toggle-status');
-       });
-    Route::prefix('booking-appraisals')->name('booking-appraisals.')->group(function() {
+    });
+    Route::prefix('booking-appraisals')->name('booking-appraisals.')->group(function () {
         Route::get('/', [BookingAppraisalController::class, 'index'])->name('index');
         Route::get('/create', [BookingAppraisalController::class, 'create'])->name('create');
         Route::post('/', [BookingAppraisalController::class, 'store'])->name('store');
@@ -150,11 +156,11 @@ Route::prefix('agent')->name('agent.')->middleware(['agent.auth'])->group(functi
         Route::get('/{bookingAppraisal}/edit', [BookingAppraisalController::class, 'edit'])->name('edit');
         Route::put('/{bookingAppraisal}', [BookingAppraisalController::class, 'update'])->name('update');
         Route::delete('/{bookingAppraisal}', [BookingAppraisalController::class, 'destroy'])->name('destroy');
-        
+
         Route::get('/{bookingAppraisal}/confirm', [BookingAppraisalController::class, 'confirm'])->name('confirm');
         Route::post('/{bookingAppraisal}/send-confirmation', [BookingAppraisalController::class, 'sendConfirmation'])->name('send-confirmation');
     });
-    Route::prefix('just-listed')->name('just-listed.')->group(function() {
+    Route::prefix('just-listed')->name('just-listed.')->group(function () {
         Route::get('/', [JustListedController::class, 'index'])->name('index');
         Route::get('/create', [JustListedController::class, 'create'])->name('create');
         Route::post('/', [JustListedController::class, 'store'])->name('store');
@@ -167,16 +173,16 @@ Route::prefix('agent')->name('agent.')->middleware(['agent.auth'])->group(functi
 });
 
 Route::middleware('agency.guest')->group(function () {
-    Route::get('/',[AgencyLoginController::class,'agencyLogin'])->name('login');
-    Route::get('/agency/signup',[SignupController::class,'index'])->name('agency.signup');
+    Route::get('/', [AgencyLoginController::class, 'agencyLogin'])->name('login');
+    Route::get('/agency/signup', [SignupController::class, 'index'])->name('agency.signup');
     Route::post('/agency-login', [AgencyLoginController::class, 'authenticate'])->name('agency.login');
     Route::post('/agency/register/store', [SignupController::class, 'store'])->name('agency.signup.store');
-Route::post('/agency/send-otp', [SignupController::class, 'sendOTP'])->name('agency.send.otp');
-Route::post('/agency/resend-otp', [SignupController::class, 'resendOTP'])->name('agency.resend.otp');
-Route::post('/agency/verify-otp', [SignupController::class, 'verifyOTP'])->name('agency.verify.otp');
-Route::post('/agency/login/send-otp', [AgencyLoginController::class, 'sendLoginOTP'])->name('agency.login.send.otp');
-Route::post('/agency/login/resend-otp', [AgencyLoginController::class, 'resendLoginOTP'])->name('agency.login.resend.otp');
-Route::post('/agency/login/verify-otp', [AgencyLoginController::class, 'verifyLoginOTP'])->name('agency.login.verify.otp');
+    Route::post('/agency/send-otp', [SignupController::class, 'sendOTP'])->name('agency.send.otp');
+    Route::post('/agency/resend-otp', [SignupController::class, 'resendOTP'])->name('agency.resend.otp');
+    Route::post('/agency/verify-otp', [SignupController::class, 'verifyOTP'])->name('agency.verify.otp');
+    Route::post('/agency/login/send-otp', [AgencyLoginController::class, 'sendLoginOTP'])->name('agency.login.send.otp');
+    Route::post('/agency/login/resend-otp', [AgencyLoginController::class, 'resendLoginOTP'])->name('agency.login.resend.otp');
+    Route::post('/agency/login/verify-otp', [AgencyLoginController::class, 'verifyLoginOTP'])->name('agency.login.verify.otp');
 });
 
 Route::middleware('agency.auth')->group(function () {
@@ -184,90 +190,87 @@ Route::middleware('agency.auth')->group(function () {
     Route::post('/agency-logout', [AgencyLoginController::class, 'logout'])->name('agency.logout');
 
 
- Route::get('/plans', [AgencySubscriptionController::class, 'showSubscriptionPlans'])->name('subscription.plans');
+    Route::get('/plans', [AgencySubscriptionController::class, 'showSubscriptionPlans'])->name('subscription.plans');
     Route::post('/initiate-payment', [AgencySubscriptionController::class, 'initiatePayment'])->name('subscription.initiate');
     Route::post('/payment-success', [AgencySubscriptionController::class, 'handlePaymentSuccess'])->name('subscription.success');
     Route::get('/payment-failure', [AgencySubscriptionController::class, 'handlePaymentFailure'])->name('subscription.failure');
 
-    Route::prefix('agency')->group(function() {
-    Route::get('/agents', [AddingAgentsController::class, 'index'])->name('agency.agents.index');
-    Route::get('/agents/create', [AddingAgentsController::class, 'create'])->name('agency.agents.create');
-    Route::post('/agents/store', [AddingAgentsController::class, 'store'])->name('agency.agents.store');
-    Route::get('/agents/{agent}/edit', [AddingAgentsController::class, 'edit'])->name('agency.agents.edit');
-    Route::get('/agents/{agent}/delete', [AddingAgentsController::class, 'destroy'])->name('agency.agents.destroy');
-    Route::put('/agents/{agent}/update', [AddingAgentsController::class, 'update'])->name('agency.agents.update');
+    Route::prefix('agency')->group(function () {
+        Route::get('/agents', [AddingAgentsController::class, 'index'])->name('agency.agents.index');
+        Route::get('/agents/create', [AddingAgentsController::class, 'create'])->name('agency.agents.create');
+        Route::post('/agents/store', [AddingAgentsController::class, 'store'])->name('agency.agents.store');
+        Route::get('/agents/{agent}/edit', [AddingAgentsController::class, 'edit'])->name('agency.agents.edit');
+        Route::get('/agents/{agent}/delete', [AddingAgentsController::class, 'destroy'])->name('agency.agents.destroy');
+        Route::put('/agents/{agent}/update', [AddingAgentsController::class, 'update'])->name('agency.agents.update');
 
         Route::get('/agents/{agent}', [AddingAgentsController::class, 'show'])->name('agency.agents.show');
-    Route::get('booking-appraisals', [AgencyBookingAppraisalController::class, 'index'])->name('agency.booking-appraisals.index');
-    Route::get('booking-appraisals/{id}', [AgencyBookingAppraisalController::class, 'show'])->name('agency.booking-appraisals.show');
-    Route::delete('booking-appraisals/{id}', [AgencyBookingAppraisalController::class, 'destroy'])->name('agency.booking-appraisals.destroy');
-});
+        Route::get('booking-appraisals', [AgencyBookingAppraisalController::class, 'index'])->name('agency.booking-appraisals.index');
+        Route::get('booking-appraisals/{id}', [AgencyBookingAppraisalController::class, 'show'])->name('agency.booking-appraisals.show');
+        Route::delete('booking-appraisals/{id}', [AgencyBookingAppraisalController::class, 'destroy'])->name('agency.booking-appraisals.destroy');
+    });
 
 
-Route::prefix('agency')->name('agency.')->group(function () {
+    Route::prefix('agency')->name('agency.')->group(function () {
 
-    // Hot Leads Routes
-    Route::get('/hotleads', [HotLeadController::class, 'index'])->name('hotleads.index');
-    Route::get('/hotleads/create', [HotLeadController::class, 'create'])->name('hotleads.create');
-    Route::post('/hotleads', [HotLeadController::class, 'store'])->name('hotleads.store');
-    Route::get('/hotleads/{hotLead}', [HotLeadController::class, 'show'])->name('hotleads.show');
-    Route::get('/hotleads/{hotLead}/edit', [HotLeadController::class, 'edit'])->name('hotleads.edit');
-    Route::put('/hotleads/{hotLead}', [HotLeadController::class, 'update'])->name('hotleads.update');
-    Route::delete('/hotleads/{hotLead}', [HotLeadController::class, 'destroy'])->name('hotleads.destroy');
-    Route::post('/hotleads/{hotLead}/status', [HotLeadController::class, 'changeStatus'])->name('hotleads.status');
+        // Hot Leads Routes
+        Route::get('/hotleads', [HotLeadController::class, 'index'])->name('hotleads.index');
+        Route::get('/hotleads/create', [HotLeadController::class, 'create'])->name('hotleads.create');
+        Route::post('/hotleads', [HotLeadController::class, 'store'])->name('hotleads.store');
+        Route::get('/hotleads/{hotLead}', [HotLeadController::class, 'show'])->name('hotleads.show');
+        Route::get('/hotleads/{hotLead}/edit', [HotLeadController::class, 'edit'])->name('hotleads.edit');
+        Route::put('/hotleads/{hotLead}', [HotLeadController::class, 'update'])->name('hotleads.update');
+        Route::delete('/hotleads/{hotLead}', [HotLeadController::class, 'destroy'])->name('hotleads.destroy');
+        Route::post('/hotleads/{hotLead}/status', [HotLeadController::class, 'changeStatus'])->name('hotleads.status');
 
-    //Conduct Appraisal
-    Route::get('/conduct-appraisals', [AgencyConductAppraisalController::class, 'index'])->name('conduct-appraisals.index');
-    Route::get('/conduct-appraisals/{id}', [AgencyConductAppraisalController::class, 'show'])->name('conduct-appraisals.show');
-    Route::delete('/conduct-appraisals/{id}', [AgencyConductAppraisalController::class, 'destroy'])->name('conduct-appraisals.destroy');
-    //Just Listed
-     Route::get('just-listed', [AgencyJustListedController::class, 'index'])->name('just-listed.index');
-    Route::get('just-listed/{id}', [AgencyJustListedController::class, 'show'])->name('just-listed.show');
-    Route::delete('just-listed/{id}', [AgencyJustListedController::class, 'destroy'])->name('just-listed.destroy');
-
-});
-
+        //Conduct Appraisal
+        Route::get('/conduct-appraisals', [AgencyConductAppraisalController::class, 'index'])->name('conduct-appraisals.index');
+        Route::get('/conduct-appraisals/{id}', [AgencyConductAppraisalController::class, 'show'])->name('conduct-appraisals.show');
+        Route::delete('/conduct-appraisals/{id}', [AgencyConductAppraisalController::class, 'destroy'])->name('conduct-appraisals.destroy');
+        //Just Listed
+        Route::get('just-listed', [AgencyJustListedController::class, 'index'])->name('just-listed.index');
+        Route::get('just-listed/{id}', [AgencyJustListedController::class, 'show'])->name('just-listed.show');
+        Route::delete('just-listed/{id}', [AgencyJustListedController::class, 'destroy'])->name('just-listed.destroy');
+    });
 });
 //Admin Routes
 Route::prefix('admin')->name('admin.')->group(function () {
-    
-        Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
-        Route::post('login', [AdminAuthController::class, 'login'])->name('login.submit');
+
+    Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AdminAuthController::class, 'login'])->name('login.submit');
 
     Route::middleware('admin.auth')->group(function () {
         Route::get('dashboard', [AdminAuthController::class, 'dashboard'])->name('dashboard');
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
-         Route::get('agencies', [AdminAuthController::class, 'agencies'])->name('agencies');
+        Route::get('agencies', [AdminAuthController::class, 'agencies'])->name('agencies');
         Route::get('agents', [AdminAuthController::class, 'agents'])->name('agents');
         Route::get('subscriptions', [AdminAuthController::class, 'subscriptions'])->name('subscriptions');
         Route::get('reports', [AdminAuthController::class, 'reports'])->name('reports');
 
         // Plan management page
-    Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
-    
-    Route::get('/plans/list', [PlanController::class, 'getPlans'])->name('plans.list');
-    Route::post('/plans', [PlanController::class, 'store'])->name('plans.store');
-    Route::get('/plans/{plan}', [PlanController::class, 'show'])->name('plans.show');
-    Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
-    Route::delete('/plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
-    Route::post('/plans/{plan}/toggle-status', [PlanController::class, 'toggleStatus'])->name('plans.toggle-status');
-    Route::post('/plans/{plan}/duplicate', [PlanController::class, 'duplicate'])->name('plans.duplicate');
-        
+        Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
 
-       Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription');
-    
-    Route::get('/invoices', [SubscriptionController::class, 'invoicesDetail'])->name('invoices.detail');
-    Route::get('/invoices/data', [SubscriptionController::class, 'getInvoicesData'])->name('invoices.data');
-    Route::get('/invoices/export/{type}', [SubscriptionController::class, 'exportInvoices'])->name('invoices.export');
+        Route::get('/plans/list', [PlanController::class, 'getPlans'])->name('plans.list');
+        Route::post('/plans', [PlanController::class, 'store'])->name('plans.store');
+        Route::get('/plans/{plan}', [PlanController::class, 'show'])->name('plans.show');
+        Route::put('/plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
+        Route::delete('/plans/{plan}', [PlanController::class, 'destroy'])->name('plans.destroy');
+        Route::post('/plans/{plan}/toggle-status', [PlanController::class, 'toggleStatus'])->name('plans.toggle-status');
+        Route::post('/plans/{plan}/duplicate', [PlanController::class, 'duplicate'])->name('plans.duplicate');
+
+
+        Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription');
+
+        Route::get('/invoices', [SubscriptionController::class, 'invoicesDetail'])->name('invoices.detail');
+        Route::get('/invoices/data', [SubscriptionController::class, 'getInvoicesData'])->name('invoices.data');
+        Route::get('/invoices/export/{type}', [SubscriptionController::class, 'exportInvoices'])->name('invoices.export');
     });
-    
 });
-    Route::middleware('admin.auth')->group(function () {
+Route::middleware('admin.auth')->group(function () {
 
- Route::get('/agency/index', [AdminAgencyController::class, 'index'])->name('agency.index');
-    
+    Route::get('/agency/index', [AdminAgencyController::class, 'index'])->name('agency.index');
+
     Route::post('/register', [AdminAgencyController::class, 'store'])->name('agency.store');
-    
+
     // DataTables endpoints
     Route::get('/agencies', [AdminAgencyController::class, 'getAgencies'])->name('agency.getAgencies');
     Route::get('/new-applications', [AdminAgencyController::class, 'getNewApplications'])->name('agency.getNewApplications');
@@ -279,26 +282,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/reject/{id}', [AdminAgencyController::class, 'reject'])->name('agency.reject');
     Route::post('/activate/{id}', [AdminAgencyController::class, 'activate'])->name('agency.activate');
     Route::delete('/{id}', [AdminAgencyController::class, 'destroy'])->name('agency.destroy');
-        Route::prefix('agent')->name('agent.')->group(function(){
+    Route::prefix('agent')->name('agent.')->group(function () {
 
-     Route::get('/index', [AdminAgentController::class, 'index'])->name('index');
+        Route::get('/index', [AdminAgentController::class, 'index'])->name('index');
 
-    Route::post('/store', [AdminAgentController::class, 'store'])->name('store');
+        Route::post('/store', [AdminAgentController::class, 'store'])->name('store');
 
-    Route::get('/active', [AdminAgentController::class, 'getAgents'])->name('getAgents');
-    Route::get('/new-applications', [AdminAgentController::class, 'getNewApplications'])->name('getNewApplications');
-    Route::get('/inactive', [AdminAgentController::class, 'getInactiveAgents'])->name('getInactiveAgents');
-Route::post('/{id}/update-status', [AdminAgentController::class, 'updateStatus'])->name('updatestatus');
-    Route::get('/{id}', [AdminAgentController::class, 'show'])->name('show');
-    Route::post('/approve/{id}', [AdminAgentController::class, 'approve'])->name('approve');
-    Route::post('/reject/{id}', [AdminAgentController::class, 'reject'])->name('reject');
-    Route::post('/activate/{id}', [AdminAgentController::class, 'activate'])->name('activate');
-    Route::delete('/{id}', [AdminAgentController::class, 'destroy'])->name('destroy');
-            });
-
+        Route::get('/active', [AdminAgentController::class, 'getAgents'])->name('getAgents');
+        Route::get('/new-applications', [AdminAgentController::class, 'getNewApplications'])->name('getNewApplications');
+        Route::get('/inactive', [AdminAgentController::class, 'getInactiveAgents'])->name('getInactiveAgents');
+        Route::post('/{id}/update-status', [AdminAgentController::class, 'updateStatus'])->name('updatestatus');
+        Route::get('/{id}', [AdminAgentController::class, 'show'])->name('show');
+        Route::post('/approve/{id}', [AdminAgentController::class, 'approve'])->name('approve');
+        Route::post('/reject/{id}', [AdminAgentController::class, 'reject'])->name('reject');
+        Route::post('/activate/{id}', [AdminAgentController::class, 'activate'])->name('activate');
+        Route::delete('/{id}', [AdminAgentController::class, 'destroy'])->name('destroy');
     });
+});
 Route::prefix('dashboard')->group(function () {
-Route::view('/', 'dashboards.default_dashboard')->name('dashboard');
+    Route::view('/', 'dashboards.default_dashboard')->name('dashboard');
 });
 Route::view('ecommerce-dashboard', 'dashboards.ecommerce_dashboard')->name('ecommerce_dashboard');
 
@@ -600,7 +602,3 @@ Route::view('knowledge-detail', 'knowledgebase.knowledge_detail')->name('knowled
 
 //support_ticket
 Route::view('support-ticket', 'support_ticket')->name('support_ticket');
-
-
-
-

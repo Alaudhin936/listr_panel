@@ -42,6 +42,9 @@
         <li class="<?php echo e(request()->routeIs('agent.tempforconduct.*') ? 'active' : ''); ?>">
             <a href="<?php echo e(route('agent.tempforconduct.index')); ?>">Temp for Conduct</a>
         </li>
+         <li class="<?php echo e(request()->routeIs('agent.package.*') ? 'active' : ''); ?>">
+            <a href="<?php echo e(route('agent.package.index')); ?>">Packages</a>
+        </li>
     </ul>
 </li>
 

@@ -511,7 +511,7 @@
                                                             {{ old('under_cover_parking_type') == 'Carport' ? 'selected' : '' }}>
                                                             Carport</option>
                                                         <option value="Garage + Carport"
-                                                            {{ old('under_cover_parking_type') == 'Carport' ? 'selected' : '' }}>
+                                                            {{ old('under_cover_parking_type') == 'Garage + Carport' ? 'selected' : '' }}>
                                                             Garage + Carport</option>
                                                     </select>
                                                 </div>
@@ -672,7 +672,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">SMS Preview</label>
-                                                    <textarea name="sms_preview" id="sms_preview" class="form-control" rows="3" readonly>Select a template to preview</textarea>
+                                                    <textarea name="sms_preview" id="sms_preview" class="form-control" rows="3">Select a template to preview</textarea>
                                                 </div>
                                             </div>
 
@@ -714,7 +714,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label">Email Preview</label>
-                                                    <textarea name="email_preview" id="email_preview" class="form-control" rows="5" readonly>Select a template to preview</textarea>
+                                                    <textarea name="email_preview" id="email_preview" class="form-control" rows="5">Select a template to preview</textarea>
                                                 </div>
                                             </div>
 

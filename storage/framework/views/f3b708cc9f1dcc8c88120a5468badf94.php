@@ -1,6 +1,4 @@
-@extends('layout.master')
-
-@section('main_content')
+<?php $__env->startSection('main_content'); ?>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
@@ -18,7 +16,7 @@
                             <div class="card">
                                 <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                                     <h4 class="hot-head1"><i class="fas fa-home mr-2"></i>Just Listed Form</h4>
-                                    <a href="{{ url()->previous() }}" class="btn btn-outline-secondary">
+                                    <a href="<?php echo e(url()->previous()); ?>" class="btn btn-outline-secondary">
                                         <i class="fas fa-arrow-left mr-1"></i> Back
                                     </a>
                                 </div>
@@ -43,23 +41,25 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                                @foreach ($allAppraisals as $appraisal)
-                                                                    <tr data-appraisal='@json($appraisal)'>
+                                                                <?php $__currentLoopData = $allAppraisals; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $appraisal): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                    <tr data-appraisal='<?php echo json_encode($appraisal, 15, 512) ?>'>
                                                                         <td>
                                                                             <div class="form-check form-switch">
                                                                                 <input
                                                                                     class="form-check-input select-checkbox"
                                                                                     type="checkbox" role="switch"
-                                                                                    id="flexSwitchCheck{{ $appraisal->id }}">
+                                                                                    id="flexSwitchCheck<?php echo e($appraisal->id); ?>">
                                                                             </div>
                                                                         </td>
-                                                                        <td>{{ $appraisal->vendor1_first_name }}
-                                                                            {{ $appraisal->vendor1_last_name }}</td>
-                                                                        <td>{{ $appraisal->vendor1_address }}</td>
-                                                                        <td>{{ $appraisal->created_at->diffForHumans() }}
+                                                                        <td><?php echo e($appraisal->vendor1_first_name); ?>
+
+                                                                            <?php echo e($appraisal->vendor1_last_name); ?></td>
+                                                                        <td><?php echo e($appraisal->vendor1_address); ?></td>
+                                                                        <td><?php echo e($appraisal->created_at->diffForHumans()); ?>
+
                                                                         </td> <!-- Human-readable -->
                                                                     </tr>
-                                                                @endforeach
+                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                             </tbody>
                                                         </table>
 
@@ -81,7 +81,7 @@
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label" for="property_address">Address</label>
-                                                    <textarea class="form-control" id="property_address" name="vendor1_address" rows="3" required>{{ $appraisalData['vendor1_address'] ?? old('property_address') }}</textarea>
+                                                    <textarea class="form-control" id="property_address" name="vendor1_address" rows="3" required><?php echo e($appraisalData['vendor1_address'] ?? old('property_address')); ?></textarea>
                                                 </div>
                                             </div>
 
@@ -91,17 +91,17 @@
                                                 </div>
                                             </div>
                                             <!-- In your just listed form view -->
-                                            @if (isset($appraisalData))
+                                            <?php if(isset($appraisalData)): ?>
                                                 <input type="hidden" name="conduct_appraisal_id"
-                                                    value="{{ $appraisal->id }}">
-                                            @endif
+                                                    value="<?php echo e($appraisal->id); ?>">
+                                            <?php endif; ?>
 
                                             <div class="col-md-6">
                                                 <div class="mb-3">
                                                     <label class="form-label" for="vendor1_first_name">First Name *</label>
                                                     <input class="form-control" id="vendor1_first_name"
                                                         name="vendor1_first_name" type="text"
-                                                        value="{{ $appraisalData['vendor1_first_name'] ?? old('vendor1_first_name') }}"
+                                                        value="<?php echo e($appraisalData['vendor1_first_name'] ?? old('vendor1_first_name')); ?>"
                                                         placeholder="First Name" required>
                                                 </div>
                                             </div>
@@ -110,7 +110,7 @@
                                                     <label class="form-label" for="vendor1_last_name">Last Name *</label>
                                                     <input class="form-control" id="vendor1_last_name"
                                                         name="vendor1_last_name" type="text"
-                                                        value="{{ $appraisalData['vendor1_last_name'] ?? old('vendor1_last_name') }}"
+                                                        value="<?php echo e($appraisalData['vendor1_last_name'] ?? old('vendor1_last_name')); ?>"
                                                         placeholder="Last Name" required>
                                                 </div>
                                             </div>
@@ -120,7 +120,7 @@
                                                     <label class="form-label" for="vendor1_mobile">Mobile *</label>
                                                     <input class="form-control" id="vendor1_mobile" name="vendor1_mobile"
                                                         type="text"
-                                                        value="{{ $appraisalData['vendor1_mobile'] ?? old('vendor1_mobile') }}"
+                                                        value="<?php echo e($appraisalData['vendor1_mobile'] ?? old('vendor1_mobile')); ?>"
                                                         placeholder="" required>
                                                 </div>
                                             </div>
@@ -130,13 +130,13 @@
                                                     <label class="form-label" for="vendor1_email">Email *</label>
                                                     <input class="form-control" id="vendor1_email" name="vendor1_email"
                                                         type="email"
-                                                        value="{{ $appraisalData['vendor1_email'] ?? old('vendor1_email') }}"
+                                                        value="<?php echo e($appraisalData['vendor1_email'] ?? old('vendor1_email')); ?>"
                                                         placeholder="" required>
                                                 </div>
                                             </div>
 
                                             <!-- Pre-fill additional vendor if exists -->
-                                            @if (isset($appraisalData['vendor2_first_name']) && $appraisalData['vendor2_first_name'])
+                                            <?php if(isset($appraisalData['vendor2_first_name']) && $appraisalData['vendor2_first_name']): ?>
                                                 <script>
                                                     $(document).ready(function() {
                                                         // Check the "Add vendor" radio button
@@ -144,13 +144,13 @@
                                                         $('#vendor2Fields').show();
 
                                                         // Pre-fill vendor 2 fields
-                                                        $('#vendor2_first_name').val('{{ $appraisalData['vendor2_first_name'] }}');
-                                                        $('#vendor2_last_name').val('{{ $appraisalData['vendor2_last_name'] }}');
-                                                        $('#vendor2_mobile').val('{{ $appraisalData['vendor2_mobile'] }}');
-                                                        $('#vendor2_email').val('{{ $appraisalData['vendor2_email'] }}');
+                                                        $('#vendor2_first_name').val('<?php echo e($appraisalData['vendor2_first_name']); ?>');
+                                                        $('#vendor2_last_name').val('<?php echo e($appraisalData['vendor2_last_name']); ?>');
+                                                        $('#vendor2_mobile').val('<?php echo e($appraisalData['vendor2_mobile']); ?>');
+                                                        $('#vendor2_email').val('<?php echo e($appraisalData['vendor2_email']); ?>');
                                                     });
                                                 </script>
-                                            @endif
+                                            <?php endif; ?>
 
                                             <!-- Add vendor? -->
                                             <div class="col-md-12">
@@ -344,14 +344,14 @@
                                                                         <label class="form-label">Auction date</label>
                                                                         <input class="form-control digits" type="date"
                                                                             name="auction_date"
-                                                                            value="{{ date('Y-m-d') }}">
+                                                                            value="<?php echo e(date('Y-m-d')); ?>">
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">First Open for
                                                                             Inspection</label>
                                                                         <input class="form-control digits" type="date"
                                                                             name="first_open_date"
-                                                                            value="{{ date('Y-m-d') }}">
+                                                                            value="<?php echo e(date('Y-m-d')); ?>">
                                                                     </div>
                                                                 </div>
 
@@ -363,14 +363,14 @@
                                                                             Date</label>
                                                                         <input class="form-control digits" type="date"
                                                                             name="expressions_closing_date"
-                                                                            value="{{ date('Y-m-d') }}">
+                                                                            value="<?php echo e(date('Y-m-d')); ?>">
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">First Open for
                                                                             Inspection</label>
                                                                         <input class="form-control digits" type="date"
                                                                             name="first_open_date"
-                                                                            value="{{ date('Y-m-d') }}">
+                                                                            value="<?php echo e(date('Y-m-d')); ?>">
                                                                     </div>
                                                                 </div>
 
@@ -381,7 +381,7 @@
                                                                             Inspection</label>
                                                                         <input class="form-control digits" type="date"
                                                                             name="first_open_date"
-                                                                            value="{{ date('Y-m-d') }}">
+                                                                            value="<?php echo e(date('Y-m-d')); ?>">
                                                                     </div>
                                                                 </div>
 
@@ -400,7 +400,7 @@
                                                                         known)</label>
                                                                     <input class="form-control digits" type="date"
                                                                         name="forthcoming_auction_date"
-                                                                        value="{{ date('Y-m-d') }}">
+                                                                        value="<?php echo e(date('Y-m-d')); ?>">
                                                                 </div>
 
                                                                 <div class="mb-3 sale-option" id="input-other"
@@ -1068,7 +1068,7 @@
                                                                         Appointments:</label>
                                                                     <input class="form-control digits" type="date"
                                                                         name="all_appointments_date"
-                                                                        value="{{ date('Y-m-d') }}">
+                                                                        value="<?php echo e(date('Y-m-d')); ?>">
                                                                 </div>
                                                                 <div id="input16" class="mb-3"
                                                                     style="display: none;">
@@ -1077,14 +1077,14 @@
                                                                             Floorplan & Copywriting</label>
                                                                         <input class="form-control digits" type="date"
                                                                             name="floorplan_copywriting_date"
-                                                                            value="{{ date('Y-m-d') }}">
+                                                                            value="<?php echo e(date('Y-m-d')); ?>">
                                                                     </div>
                                                                     <div class="mb-3">
                                                                         <label class="form-label">Requested Date for
                                                                             Photography</label>
                                                                         <input class="form-control digits" type="date"
                                                                             name="photography_date"
-                                                                            value="{{ date('Y-m-d') }}">
+                                                                            value="<?php echo e(date('Y-m-d')); ?>">
                                                                     </div>
                                                                 </div>
                                                                 <div id="input19" class="mb-3"
@@ -2024,7 +2024,7 @@
     <script>
         $(document).ready(function() {
             // Pre-fill property address if available
-            $('#property_address').val('{{ $appraisalData['vendor1_address'] ?? '' }}');
+            $('#property_address').val('<?php echo e($appraisalData['vendor1_address'] ?? ''); ?>');
         });
     </script>
     <script>
@@ -2428,7 +2428,7 @@
 
                 // Submit form via AJAX
                 $.ajax({
-                    url: '{{ route('agent.just-listed.store') }}',
+                    url: '<?php echo e(route('agent.just-listed.store')); ?>',
                     type: 'POST',
                     data: formData,
                     processData: false,
@@ -2446,7 +2446,7 @@
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     window.location.href =
-                                        "{{ route('agent.just-listed.index') }}";
+                                        "<?php echo e(route('agent.just-listed.index')); ?>";
                                 }
                             });
                         } else {
@@ -2483,4 +2483,6 @@
             });
         });
     </script>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layout.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\ADMIN\Desktop\listr\resources\views/agents/just-listed/create.blade.php ENDPATH**/ ?>
