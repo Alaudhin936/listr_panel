@@ -111,7 +111,7 @@ class JustListedController extends Controller
             'third_agent_other' => 'nullable|required_if:third_agent,Other|string',
 
             // Privacy
-            'privacy_consent' => 'required|boolean',
+            // 'privacy_consent' => 'required|boolean',
             'privacy_consent_trades' => 'nullable|boolean',
 
             // Marketing package

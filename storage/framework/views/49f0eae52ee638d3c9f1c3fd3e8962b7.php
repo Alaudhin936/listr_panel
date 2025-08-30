@@ -27,6 +27,7 @@
     </div>
     <div class="container mt-4">
         
+        
         <div class="container">
             <div class="row">
                 <?php $__empty_1 = true; $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
@@ -57,6 +58,82 @@
             </div>
         </div>
 
+        <div class="container mt-4" id="package-services-container">
+            <?php $__empty_1 = true; $__currentLoopData = $packages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $package): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <div class="package-table mb-4" id="package-table-<?php echo e($package->id); ?>" style="display: none;">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header d-flex align-items-center justify-content-between"
+                            style="background-color: <?php echo e($package->color_code); ?>; color: #fff; border-radius: 0.5rem 0.5rem 0 0;">
+                            <h5 class="mb-0"><?php echo e(strtoupper($package->name)); ?> PACKAGE</h5>
+                        </div>
+
+                        <div class="card-body">
+                            <?php if(isset($services[$package->id])): ?>
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>Service</th>
+                                                <th>Supplier</th>
+                                                <th>Services Included</th>
+                                                <th>Booking Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php $__currentLoopData = $services[$package->id]; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $service): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <?php
+                                                    $supplier = $suppliers->firstWhere('id', $service->supplier_id);
+                                                ?>
+                                                <tr>
+                                                    <!-- Service Category -->
+                                                    <td class="fw-bold text-uppercase"><?php echo e($service->service_catagory); ?></td>
+
+                                                    <!-- Supplier -->
+                                                    <td>
+                                                        <div class="form-control form-control-sm">
+                                                            <?php echo e($supplier->name ?? 'N/A'); ?>
+
+                                                        </div>
+                                                    </td>
+
+                                                    <!-- Services Included -->
+                                                    <td>
+                                                        <?php $__currentLoopData = json_decode($service->services); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $s): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <span class="badge bg-light text-dark border me-1 mb-1">
+                                                                <?php echo e($s); ?>
+
+                                                                <button type="button" class="btn-close btn-close-sm ms-1"
+                                                                    aria-label="Remove"></button>
+                                                            </span>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                        <a href="#" class="text-primary small d-block mt-1">+ Add
+                                                            Services</a>
+                                                    </td>
+
+                                                    <!-- Booking Date -->
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-text"><i
+                                                                    class="bi bi-calendar-event"></i></span>
+                                                            <input type="date" class="form-control"
+                                                                value="<?php echo e($service->booking_date); ?>">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            <?php else: ?>
+                                <div class="alert alert-info m-3">No services added for this package.</div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                <div class="alert alert-warning text-center">No packages found. Please add a package.</div>
+            <?php endif; ?>
+        </div>
 
         <!-- Add Package Modal -->
         <div class="modal fade custom-modal" id="addPackageModal" tabindex="-1" aria-labelledby="addPackageModalLabel"
@@ -271,7 +348,20 @@
         <script>
             $(document).ready(function() {
                 let categoryIndex = 0;
+                let firstPackageId = $(".package-card").first().attr("id").split("-")[1];
+                $("#package-table-" + firstPackageId).show();
 
+                $(".package-btn").click(function() {
+                    let packageName = $(this).data("package"); // optional
+                    let packageCard = $(this).closest(".package-card");
+                    let packageId = packageCard.attr("id").split("-")[1];
+
+                    // Hide all tables
+                    $(".package-table").hide();
+
+                    // Toggle the selected table
+                    $("#package-table-" + packageId).fadeIn(200);
+                });
                 // Add category
                 $("#add-category").click(function() {
                     categoryIndex++;
@@ -361,11 +451,12 @@
                         });
                     }
                 });
+
                 $("#updateServicesForm").submit(function(e) {
                     e.preventDefault();
 
                     let form = $(this);
-                    let formData = form.serializeArray(); // flatten data
+                    let formData = form.serializeArray();
                     let structuredData = {
                         package_id: $("#package_select").val(),
                         supplier_id: $("select[name='supplier_id']").val(),
@@ -386,7 +477,7 @@
                     });
 
                     $.ajax({
-                        url: "<?php echo e(route('agent.package.service.store')); ?>", // backend route
+                        url: "<?php echo e(route('agent.package.service.store')); ?>",
                         type: "POST",
                         data: {
                             _token: "<?php echo e(csrf_token()); ?>",
@@ -396,9 +487,9 @@
                         },
                         success: function(res) {
                             if (res.success) {
-                                alert('Services updated successfully!');
+                                window.location.reload();
                                 form[0].reset();
-                                $("#categories-container").html(''); // reset categories
+                                $("#categories-container").html('');
                             } else {
                                 alert('Something went wrong!');
                             }

@@ -26,6 +26,7 @@
         <div id="alert-container"></div>
     </div>
     <div class="container mt-4">
+        
         {{-- <h3 class="mb-4">My Packages</h3> --}}
         <div class="container">
             <div class="row">
@@ -56,6 +57,80 @@
             </div>
         </div>
 
+        <div class="container mt-4" id="package-services-container">
+            @forelse($packages as $package)
+                <div class="package-table mb-4" id="package-table-{{ $package->id }}" style="display: none;">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header d-flex align-items-center justify-content-between"
+                            style="background-color: {{ $package->color_code }}; color: #fff; border-radius: 0.5rem 0.5rem 0 0;">
+                            <h5 class="mb-0">{{ strtoupper($package->name) }} PACKAGE</h5>
+                        </div>
+
+                        <div class="card-body">
+                            @if (isset($services[$package->id]))
+                                <div class="table-responsive">
+                                    <table class="table align-middle mb-0">
+                                        <thead class="bg-light">
+                                            <tr>
+                                                <th>Service</th>
+                                                <th>Supplier</th>
+                                                <th>Services Included</th>
+                                                <th>Booking Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($services[$package->id] as $service)
+                                                @php
+                                                    $supplier = $suppliers->firstWhere('id', $service->supplier_id);
+                                                @endphp
+                                                <tr>
+                                                    <!-- Service Category -->
+                                                    <td class="fw-bold text-uppercase">{{ $service->service_catagory }}</td>
+
+                                                    <!-- Supplier -->
+                                                    <td>
+                                                        <div class="form-control form-control-sm">
+                                                            {{ $supplier->name ?? 'N/A' }}
+                                                        </div>
+                                                    </td>
+
+                                                    <!-- Services Included -->
+                                                    <td>
+                                                        @foreach (json_decode($service->services) as $s)
+                                                            <span class="badge bg-light text-dark border me-1 mb-1">
+                                                                {{ $s }}
+                                                                <button type="button" class="btn-close btn-close-sm ms-1"
+                                                                    aria-label="Remove"></button>
+                                                            </span>
+                                                        @endforeach
+                                                        <a href="#" class="text-primary small d-block mt-1">+ Add
+                                                            Services</a>
+                                                    </td>
+
+                                                    <!-- Booking Date -->
+                                                    <td>
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-text"><i
+                                                                    class="bi bi-calendar-event"></i></span>
+                                                            <input type="date" class="form-control"
+                                                                value="{{ $service->booking_date }}">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            @else
+                                <div class="alert alert-info m-3">No services added for this package.</div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="alert alert-warning text-center">No packages found. Please add a package.</div>
+            @endforelse
+        </div>
 
         <!-- Add Package Modal -->
         <div class="modal fade custom-modal" id="addPackageModal" tabindex="-1" aria-labelledby="addPackageModalLabel"
@@ -270,7 +345,20 @@
         <script>
             $(document).ready(function() {
                 let categoryIndex = 0;
+                let firstPackageId = $(".package-card").first().attr("id").split("-")[1];
+                $("#package-table-" + firstPackageId).show();
 
+                $(".package-btn").click(function() {
+                    let packageName = $(this).data("package"); // optional
+                    let packageCard = $(this).closest(".package-card");
+                    let packageId = packageCard.attr("id").split("-")[1];
+
+                    // Hide all tables
+                    $(".package-table").hide();
+
+                    // Toggle the selected table
+                    $("#package-table-" + packageId).fadeIn(200);
+                });
                 // Add category
                 $("#add-category").click(function() {
                     categoryIndex++;
@@ -360,11 +448,12 @@
                         });
                     }
                 });
+
                 $("#updateServicesForm").submit(function(e) {
                     e.preventDefault();
 
                     let form = $(this);
-                    let formData = form.serializeArray(); // flatten data
+                    let formData = form.serializeArray();
                     let structuredData = {
                         package_id: $("#package_select").val(),
                         supplier_id: $("select[name='supplier_id']").val(),
@@ -385,7 +474,7 @@
                     });
 
                     $.ajax({
-                        url: "{{ route('agent.package.service.store') }}", // backend route
+                        url: "{{ route('agent.package.service.store') }}",
                         type: "POST",
                         data: {
                             _token: "{{ csrf_token() }}",
@@ -395,9 +484,9 @@
                         },
                         success: function(res) {
                             if (res.success) {
-                                alert('Services updated successfully!');
+                                window.location.reload();
                                 form[0].reset();
-                                $("#categories-container").html(''); // reset categories
+                                $("#categories-container").html('');
                             } else {
                                 alert('Something went wrong!');
                             }

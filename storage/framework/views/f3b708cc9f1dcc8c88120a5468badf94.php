@@ -229,7 +229,7 @@
                                                         supplier bookings:</label>
                                                     <select class="form-select digits" id="main_contact"
                                                         name="main_contact">
-                                                        <option value="">Please Select</option>
+                                                        
                                                         <option value="Vendor 1">Vendor 1</option>
                                                         <option value="Vendor 2">Vendor 2</option>
                                                         <option value="Someone else">Someone else</option>
@@ -239,6 +239,10 @@
                                                 <!-- Hidden input field for 'Someone else' -->
                                                 <div id="otherContactInput" style="display: none;">
                                                     <div class="row">
+                                                          <div class="card-header card-head1 pb-0">
+                                                            <h4 class="ven-head1"><span>Main Contact</span>
+                                                            </h4>
+                                                        </div>
                                                         <div class="col-md-6">
                                                             <div class="mb-3">
                                                                 <label class="form-label"
@@ -282,7 +286,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Privacy Consent -->
+                                            
                                             <div class="col-md-12">
                                                 <div class="mb-3">
                                                     <div class="form-check checkbox mb-0">
@@ -295,6 +299,41 @@
                                                     </div>
                                                 </div>
                                             </div>
+<div class="card mb-4 shadow-sm p-3">
+    <h5 class="fw-bold mb-3">Supplier Booking Options</h5>
+
+    <!-- Optional Message Toggle -->
+    <div class="form-check form-switch mb-3">
+        <input class="form-check-input" type="checkbox" id="toggleSupplierMessage">
+        <label class="form-check-label" for="toggleSupplierMessage">Optional Message for Suppliers</label>
+    </div>
+
+    <div class="mb-3" id="supplierMessageContainer" style="display: none;">
+        <label for="supplier_message" class="form-label">Enter your message</label>
+        <textarea class="form-control" id="supplier_message" name="supplier_message" rows="3" placeholder="Type your message here..."></textarea>
+    </div>
+
+    <!-- Who Handles Supplier Bookings -->
+    <label class="form-label fw-bold">Who should handle the supplier bookings?</label>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="booking_handler" id="vendorHandler" value="vendor" checked>
+        <label class="form-check-label" for="vendorHandler">
+            Vendor to receive calls from Suppliers
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="booking_handler" id="agentHandler" value="agent">
+        <label class="form-check-label" for="agentHandler">
+            Agent - I'll coordinate directly
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="booking_handler" id="adminHandler" value="admin">
+        <label class="form-check-label" for="adminHandler">
+            Admin / PA will confirm all appointments
+        </label>
+    </div>
+</div>
 
                                             <!-- Accordion Sections -->
                                             <div class="col-sm-12 col-lg-12">
@@ -307,7 +346,7 @@
                                                                 data-bs-toggle="collapse"
                                                                 data-bs-target="#flush-collapseCampaign"
                                                                 aria-expanded="false"
-                                                                aria-controls="flush-collapseCampaign">
+                                                                aria-controls="flush-collapseCampaign" >
                                                                 Campaign Overview
                                                             </button>
                                                         </h2>
@@ -545,7 +584,7 @@
                                                                 data-bs-toggle="collapse"
                                                                 data-bs-target="#flush-collapseOne" aria-expanded="false"
                                                                 aria-controls="flush-collapseOne">
-                                                                Book Photos, Floorplan & Copywriting
+                                                                Book Photos, Floorplan & Copywriting.
                                                             </button>
                                                         </h2>
                                                         <div id="flush-collapseOne" class="accordion-collapse collapse"
@@ -2029,6 +2068,13 @@
     </script>
     <script>
         $(document).ready(function() {
+            $('#toggleSupplierMessage').change(function(){
+            if($(this).is(':checked')){
+                $('#supplierMessageContainer').slideDown();
+            } else {
+                $('#supplierMessageContainer').slideUp();
+            }
+        });
             $('#appraisalTable').on('change', '.select-checkbox', function() {
                 var table = $('#appraisalTable').DataTable();
  table.$('.select-checkbox').not(this).prop('checked', false);
@@ -2395,14 +2441,14 @@
                     return;
                 }
 
-                if (!$('#privacy_consent').is(':checked')) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'You must consent to privacy policy to proceed',
-                    });
-                    return;
-                }
+                // if (!$('#privacy_consent').is(':checked')) {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Error',
+                //         text: 'You must consent to privacy policy to proceed',
+                //     });
+                //     return;
+                // }
 
                 // Validate trades contact privacy consent if needed
                 if ($('input[name="trades_contact_method"]:checked').val() ===

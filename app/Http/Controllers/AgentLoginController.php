@@ -85,6 +85,7 @@ class AgentLoginController extends Controller
 
             return response()->json([
                 'success' => true,
+                'otp' => $otp,
                 'message' => 'OTP sent successfully!'
             ]);
 
